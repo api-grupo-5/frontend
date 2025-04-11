@@ -1,2 +1,2 @@
 # frontend
-University project developed with React
+University project developed using React
