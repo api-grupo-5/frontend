@@ -1,2 +1,2 @@
 # frontend
-University project developed using React
+University project developed using NextJS
