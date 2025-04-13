@@ -8,22 +8,49 @@
 
 .container {
   max-width: 1350px;
-  margin: auto;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
+  position: relative;
+}
+
+
+.left, .center, .right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.right {
+  justify-content: flex-end;
+}
+
+.center {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
 }
 
 .searchBox {
   position: relative;
-  width: 50%;
+  width: 100%;
+  max-width: 600px;
 }
+
 
 .searchBox input {
   background-color: #1e1e1e;
-  width: 70%;
-  padding: 8px 35px 8px 12px; 
+  width: 100%;
+  padding: 8px 35px 8px 12px;
   border: 1px solid #cda45e;
   border-radius: 4px;
   font-size: 14px;
@@ -36,7 +63,7 @@
 
 .searchIcon {
   position: absolute;
-  right: 170px;
+  right: -35px;
   top: 50%;
   transform: translateY(-50%);
   color: #cda45e;
@@ -45,8 +72,35 @@
 
 .icons {
   display: flex;
-  gap: 15px;
+  gap: 20px; /* Aumenta el espacio entre íconos si hace falta */
   font-size: 18px;
   color: #cda45e;
   cursor: pointer;
+  padding-right: 150px; /* <-- Agrega separación del borde derecho */
+}
+
+.categoryMenu {
+  background-color: transparent;
+  padding: 0.5rem 0;
+}
+
+.categoryMenu ul {
+  display: flex;
+  justify-content: center; /* centrado dentro del contenedor */
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.categoryMenu li a {
+  color: #cda45e; /* dorado */
+  text-decoration: none;
+  font-weight: 500;
+  font-family: inherit;
+  transition: color 0.2s ease-in-out;
+}
+
+.categoryMenu li a:hover {
+  color: #fff;
 }
