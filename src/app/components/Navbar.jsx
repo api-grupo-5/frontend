@@ -1,7 +1,10 @@
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image';
 import styles from '../css/navbar.module.css'
 import { FaUser, FaShoppingCart, FaSearch } from 'react-icons/fa'
+import { redirect } from "next/navigation";
 
 export default function Navbar() {
   return (
@@ -30,8 +33,13 @@ export default function Navbar() {
         {/* Iconos */}
         <div className={styles.right}>
           <div className={styles.icons}>
-            <FaUser />
-            <FaShoppingCart />
+            <div onClick={() => redirect("/login")}>
+              <FaUser />
+            </div>
+            
+            <div onClick={() => redirect("/cart")}>
+              <FaShoppingCart />
+            </div>
           </div>
         </div>
       </div>

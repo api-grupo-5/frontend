@@ -15,6 +15,7 @@ export default function Carousel() {
     useEffect(() => {
         fetch(apiUrl)
             .then(res => res.json())
+            .then(console.log(res))
             .then(data => setProducts(data))
             .catch(error => console.error("Error al cargar productos:", error));
     }, []);

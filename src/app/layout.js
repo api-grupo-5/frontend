@@ -1,10 +1,11 @@
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import styles from "./css/main.module.css";
 import { Roboto } from 'next/font/google'
 
 const roboto = Roboto({
   subsets: ['latin'],
-  weight: '400', // Puedes agregar más si necesitas
+  weight: '400',
   display: 'swap',
 });
 
@@ -17,6 +18,9 @@ export default function RootLayout({ children }) {
       <body className={`${styles.main} ${roboto.className}`}>
         <Navbar/>
         {children}
+      <footer>
+        <Footer/>
+      </footer>
       </body>
     </html>
   );

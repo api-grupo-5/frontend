@@ -17,10 +17,9 @@ export default function LoginForm() {
       headers: { "Content-Type": "application/json" },
     });
 
-    const data = await res.json();
+    // const data = await res.json();
 
     if (res.ok) {
-      localStorage.setItem("token", data.token); // o usa cookies si prefieres
       router.push("/home");
     } else {
       alert("Credenciales inválidas");
