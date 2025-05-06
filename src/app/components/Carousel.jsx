@@ -4,7 +4,6 @@ import styles from "../css/carousel.module.css";
 import Product from "./Product";
 import { useEffect, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import {addProducts} from "./Cart"
 
 export default function Carousel() {
     const [products, setProducts] = useState([]);
