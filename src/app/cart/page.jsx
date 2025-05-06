@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 
 const SECRET = 'clave_super_secreta';
 
-export default async function CarritoPage() {
+export default async function CartPage() {
   const cookieStore = await cookies();
   const token =  cookieStore.get('token')?.value;
 
@@ -17,7 +17,7 @@ export default async function CarritoPage() {
     email = decoded.email;
     carrito = decoded.carrito || [];
   } catch (err) {
-    console.log(`[${err}] en CarritoPage()`);
+    console.log(`[${err}] en CartPage()`);
   }
 
   return (

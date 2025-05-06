@@ -1,4 +1,11 @@
 export default function Carrito({ email, carrito }) {
+  const [products, setProducts] = useState([]);
+
+  const addProducts = (newProducts) => {
+    setProducts((prevProducts) => [...prevProducts, ...newProducts]);
+    console.log(products)
+  };
+
   return (
     <div>
     {carrito ?(
