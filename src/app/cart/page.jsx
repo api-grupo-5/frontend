@@ -1,7 +1,6 @@
 import Cart from "../components/Cart";
-
-import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
+import { cookies } from 'next/headers';
 
 const SECRET = 'clave_super_secreta';
 

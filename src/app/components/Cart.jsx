@@ -1,14 +1,14 @@
-export default function Carrito({ email, carrito }) {
-  const [products, setProducts] = useState([]);
+'use client'
+import { useCart } from '../context/CartContent';
 
-  const addProducts = (newProducts) => {
-    setProducts((prevProducts) => [...prevProducts, ...newProducts]);
-    console.log(products)
-  };
+export default function Carrito({ email }) {
+  const { carrito, loading } = useCart();
 
+  if (loading) return <p>Cargando carrito...</p>;
+  
   return (
     <div>
-    {carrito ?(
+    {carrito && carrito.length > 0 ?(
       <div>
       <h1>Bienvenido{email? `, ${email}`:""}</h1>
       <p>Tenes {carrito.length} productos en tu carrito</p>

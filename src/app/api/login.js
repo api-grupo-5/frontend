@@ -8,7 +8,7 @@ export default function handler(req, res) {
   const { email, password } = req.body;
   const SECRET = process.env.JWT_SECRET || 'clave_super_secreta';
 
-  if (email === 'usuario@ejemplo.com' && password === '1234') {
+  if (email === 'usuario@ejemplo.com  ' && password === '1234') {
     const token = jwt.sign({ email, carrito: [{ nombre: "Producto 1", precio: 99 }] }, SECRET, { expiresIn: '1h' });
 
     res.setHeader('Set-Cookie', serialize('token', token, {

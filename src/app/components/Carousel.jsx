@@ -4,9 +4,11 @@ import styles from "../css/carousel.module.css";
 import Product from "./Product";
 import { useEffect, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useCart } from '../context/CartContent';
 
 export default function Carousel() {
     const [products, setProducts] = useState([]);
+    const { addToCart } = useCart();
     const scrollRef = useRef(null);
     const timeoutRef = useRef(null);
     const CARD_WIDTH = process.env.CARD_WIDTH;
@@ -17,7 +19,6 @@ export default function Carousel() {
             .then(res => res.json())
             .then(data => {
                 setProducts(data)
-                addProducts(data)
             })
             .catch(error => console.error("Error al cargar productos:", error));
     }, []);
@@ -88,10 +89,6 @@ export default function Carousel() {
         }
     };
 
-    const handleAddToCart = (product) => {
-        console.log("Producto agregado al carrito:", product);
-    };
-
     return (
         <div className={styles.catalog_wrapper}>
             <h1 className={styles.catalog_titles}>¡Explora todo lo que tenemos para ofrecerte!</h1>
@@ -112,7 +109,7 @@ export default function Carousel() {
                         price={product.price}
                         onHoverStart={pauseAutoScroll}
                         onHoverEnd={resumeAutoScroll}
-                        onAddToCart={() => handleAddToCart(product)}
+                        onAddToCart={() => addToCart(product)}
                     />
                 ))}
             </div>
