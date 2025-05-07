@@ -2,7 +2,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import styles from "./css/main.module.css";
 import { Roboto } from 'next/font/google'
-import { CartProvider } from './context/CartContent';
+import { CartProvider } from './context/CartManagement';
 
 const roboto = Roboto({
   subsets: ['latin'],

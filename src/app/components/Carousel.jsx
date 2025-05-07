@@ -4,7 +4,7 @@ import styles from "../css/carousel.module.css";
 import Product from "./Product";
 import { useEffect, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { useCart } from '../context/CartContent';
+import { useCart } from '../context/CartManagement';
 
 export default function Carousel() {
     const [products, setProducts] = useState([]);
@@ -17,9 +17,7 @@ export default function Carousel() {
     useEffect(() => {
         fetch(apiUrl)
             .then(res => res.json())
-            .then(data => {
-                setProducts(data)
-            })
+            .then(data => {setProducts(data)})
             .catch(error => console.error("Error al cargar productos:", error));
     }, []);
     const loopedProducts = [...products, ...products];
