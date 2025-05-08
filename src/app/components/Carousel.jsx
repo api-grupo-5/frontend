@@ -1,32 +1,28 @@
 'use client';
 
-import { useEffect, useRef, useState } from "react";
-import Product from "./Product";
 import styles from "../css/carousel.module.css";
+import Product from "./Product";
+import { useEffect, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useCart } from '../context/CartManagement';
 
 export default function Carousel() {
     const [products, setProducts] = useState([]);
+    const { addToCart } = useCart();
     const scrollRef = useRef(null);
     const timeoutRef = useRef(null);
-    const CARD_WIDTH = 220;
+    const CARD_WIDTH = process.env.CARD_WIDTH;
     const apiUrl = process.env.NEXT_PUBLIC_FAKE_STORE_API;
 
     useEffect(() => {
         fetch(apiUrl)
-          .then(res => res.json())
-          .then(data => {
-            console.log(data);       // 👈 Acá ves los productos
-            setProducts(data);       // 👈 Y los guardás
-          })
-          .catch(error => console.error("Error al cargar productos:", error));
-      }, []);
-      
-
+            .then(res => res.json())
+            .then(data => {setProducts(data)})
+            .catch(error => console.error("Error al cargar productos:", error));
+    }, []);
     const loopedProducts = [...products, ...products];
 
     const pauseAutoScroll = () => clearTimeout(timeoutRef.current);
-
     const resumeAutoScroll = () => {
         clearTimeout(timeoutRef.current);
         startAutoScroll();
@@ -91,11 +87,6 @@ export default function Carousel() {
         }
     };
 
-    const handleAddToCart = (product) => {
-        console.log("Producto agregado al carrito:", product);
-        // Acá podrías usar un contexto, Redux, o localStorage según cómo manejes el carrito
-    };
-
     return (
         <div className={styles.catalog_wrapper}>
             <h1 className={styles.catalog_titles}>¡Explora todo lo que tenemos para ofrecerte!</h1>
@@ -116,7 +107,7 @@ export default function Carousel() {
                         price={product.price}
                         onHoverStart={pauseAutoScroll}
                         onHoverEnd={resumeAutoScroll}
-                        onAddToCart={() => handleAddToCart(product)}
+                        onAddToCart={() => addToCart(product)}
                     />
                 ))}
             </div>
