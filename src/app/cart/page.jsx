@@ -1,31 +1,30 @@
+'use client'
 import Cart from "../components/Cart";
+import { useEffect, useState } from "react";
 
-import { cookies } from 'next/headers';
-import jwt from 'jsonwebtoken';
+export default function CartPage() {
+  const [carrito, setCarrito] = useState([]);
 
-const SECRET = 'clave_super_secreta';
-
-export default async function CarritoPage() {
-  const cookieStore = await cookies();
-  const token =  cookieStore.get('token')?.value;
-
-  let email = null;
-  let carrito = [];
-
-  try {
-    const decoded = jwt.verify(token, SECRET);
-    email = decoded.email;
-    carrito = decoded.carrito || [];
-  } catch (err) {
-    console.log(`[${err}] en CarritoPage()`);
-  }
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      console.log("useEffect ejecutado en el cliente");
+      try {
+        const cartData = localStorage.getItem('cart');
+        console.log("cartData:", cartData);
+        if (cartData) {
+          setCarrito(JSON.parse(cartData));
+        } else {
+          console.log("No hay carrito en localStorage");
+        }
+      } catch (err) {
+        console.error(`[${err}] en CartPage()`);
+      }
+    }
+  }, []);
 
   return (
     <div style={{ padding: "2rem", color: "white" }}>
-      <Cart 
-        email={email}
-        carrito={carrito}
-      />
+      <Cart/>
     </div>
   );
 }

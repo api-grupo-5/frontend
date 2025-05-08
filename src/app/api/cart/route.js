@@ -1,13 +1,7 @@
-// app/api/carrito/route.js
 import jwt from 'jsonwebtoken';
 import { parse, serialize } from 'cookie';
 
 const SECRET = 'clave_super_secreta';
-
-const productos = [
-  { id: 1, nombre: 'Producto 1', precio: 100 },
-  { id: 2, nombre: 'Producto 2', precio: 150 },
-];
 
 export async function GET(req) {
   const cookies = req.headers.get('cookie');
