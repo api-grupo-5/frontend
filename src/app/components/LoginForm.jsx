@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import styles from "../css/loginForm.module.css";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -17,8 +18,6 @@ export default function LoginForm() {
       headers: { "Content-Type": "application/json" },
     });
 
-    // const data = await res.json();
-
     if (res.ok) {
       router.push("/home");
     } else {
@@ -27,24 +26,52 @@ export default function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-        required
-      />
-      <br />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Contraseña"
-        required
-      />
-      <br />
-      <button type="submit">Ingresar</button>
-    </form>
+    <div className={styles.loginContainer}>
+      <div className={styles.logoContainer}>
+        <img
+          src="/images/OnlyLogo.png" // Ruta del logo
+          alt="Accelerate Logo"
+          className={styles.logo} 
+        />
+      </div>
+      <div className={styles.loginBox}>
+        <h1 className={styles.loginHeader}>Bienvenido</h1>
+        <form onSubmit={handleSubmit} className={styles.loginForm}>
+          <label htmlFor="email" className={styles.loginLabel}>
+            Correo Electrónico o Usuario
+          </label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Ingrese su correo o usuario"
+            className={styles.loginInput}
+            required
+          />
+          <label htmlFor="password" className={styles.loginLabel}>
+            Contraseña
+          </label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Ingrese su contraseña"
+            className={styles.loginInput}
+            required
+          />
+          <button type="submit" className={styles.loginButton}>
+            Continuar
+          </button>
+        </form>
+        <p className={styles.loginFooter}>
+          ¿Olvidaste tu contraseña? <a href="/recover">Recupérala aquí</a>
+        </p>
+        <p className={styles.loginFooter}>
+          ¿No tienes una cuenta? <a href="/register">Crea una aquí</a>
+        </p>
+      </div>
+    </div>
   );
 }
