@@ -51,6 +51,7 @@ export default function Navbar() {
             <li><Link href="/categoria/computacion">Computación</Link></li>
             <li><Link href="/categoria/televisores">Electrodomésticos</Link></li>
             <li><Link href="/categoria/perifericos">Periféricos</Link></li>
+            <li><Link href="/emular-venta">Cargar producto</Link></li>
           </ul>
         </div>
       </div>
