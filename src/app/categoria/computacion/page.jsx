@@ -2,85 +2,18 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import styles from '../perifericos/perifericos.module.css';
+import { productosComputacion } from '../../data/productos';
 
-const productosComputacion = [
-  {
-    id: 201,
-    nombre: 'Notebook Acer Aspire 5 15.6"',
-    precio: 899.99,
-    imagen: '/images/notebook.jpg',
-  },
-  {
-    id: 202,
-    nombre: 'Placa de Video NVIDIA RTX 4060',
-    precio: 549.99,
-    imagen: '/images/rtx4060.jpg',
-  },
-  {
-    id: 203,
-    nombre: 'Procesador Intel Core i7 12va Gen',
-    precio: 399.99,
-    imagen: '/images/intel_i7.jpg',
-  },
-  {
-    id: 4,
-    nombre: 'Mouse SteelSeries Aerox 9 Wireless',
-    precio: 249.99,
-    imagen: '/images/mouse.jpg',
-  },
-  {
-    id: 5,
-    nombre: 'Auriculares SteelSeries Arctis Nova PRO',
-    precio: 299.99,
-    imagen: '/images/auriculares.jpg',
-  },
-  {
-    id: 6,
-    nombre: 'Teclado Hypermagnetico SteelSeries Apex PRO',
-    precio: 389.99,
-    imagen: '/images/teclado.jpg',
-  },
-  {
-    id: 7,
-    nombre: 'Mouse SteelSeries Aerox 9 Wireless',
-    precio: 249.99,
-    imagen: '/images/mouse.jpg',
-  },
-  {
-    id: 8,
-    nombre: 'Mouse SteelSeries Aerox 9 Wireless',
-    precio: 249.99,
-    imagen: '/images/mouse.jpg',
-  },
-  {
-    id: 9,
-    nombre: 'Auriculares SteelSeries Arctis Nova PRO',
-    precio: 299.99,
-    imagen: '/images/auriculares.jpg',
-  },
-  {
-    id: 10,
-    nombre: 'Teclado Hypermagnetico SteelSeries Apex PRO',
-    precio: 389.99,
-    imagen: '/images/teclado.jpg',
-  },
-  {
-    id: 11,
-    nombre: 'Mouse SteelSeries Aerox 9 Wireless',
-    precio: 249.99,
-    imagen: '/images/mouse.jpg',
-  },
-  {
-    id: 12,
-    nombre: 'Mouse SteelSeries Aerox 9 Wireless',
-    precio: 249.99,
-    imagen: '/images/mouse.jpg',
-  },
-  
-];
+const usuarioActual = 'tobias@demo.com';
 
 export default function ComputacionPage() {
   const [orden, setOrden] = useState('Todos');
+  const [carrito, setCarrito] = useState([]);
+
+  const agregarAlCarrito = (producto) => {
+    setCarrito([...carrito, producto]);
+    alert(`${producto.nombre} fue agregado al carrito`);
+  };
 
   const ordenarProductos = (lista, criterio) => {
     const copia = [...lista];
@@ -115,7 +48,16 @@ export default function ComputacionPage() {
             <img src={producto.imagen} alt={producto.nombre} className={styles.imagenProducto} />
             <h3>{producto.nombre}</h3>
             <p>${producto.precio}</p>
-            <button className={styles.btnCarrito}>Agregar al carrito</button>
+            <button className={styles.btnCarrito} onClick={() => agregarAlCarrito(producto)}>
+              Agregar al carrito
+            </button>
+
+            {producto.autor === usuarioActual && (
+              <div className={styles.botonesAdmin}>
+                <button className={styles.btnEditar}>Editar</button>
+                <button className={styles.btnEliminar}>Eliminar</button>
+              </div>
+            )}
           </div>
         ))}
       </div>

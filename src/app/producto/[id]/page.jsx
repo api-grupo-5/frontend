@@ -1,58 +1,47 @@
 'use client';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-
-const productosPerifericos = [
-  {
-    id: 1,
-    nombre: 'Auriculares SteelSeries Arctis Nova PRO',
-    precio: 299.99,
-    imagen: '/images/mouse.png',
-    descripcion: 'Auriculares con calidad de sonido Hi-Res y cancelación activa de ruido.',
-  },
-  {
-    id: 2,
-    nombre: 'Teclado Hypermagnetico SteelSeries Apex PRO',
-    precio: 389.99,
-    imagen: '/images/teclado.jpg',
-    descripcion: 'Teclado mecánico con switches ajustables y retroiluminación RGB.',
-  },
-  {
-    id: 3,
-    nombre: 'Mouse SteelSeries Aerox 9 Wireless',
-    precio: 249.99,
-    imagen: '/images/mouse.jpg',
-    descripcion: 'Mouse ultra liviano con diseño perforado y conectividad dual.',
-  },
-  // ... Agregá el resto de tus productos
-];
+import { productosPerifericos, productosElectrodomesticos, productosComputacion } from '../../data/productos';
+import styles from './productoDetalle.module.css';
 
 export default function DetalleProducto() {
   const { id } = useParams();
   const [producto, setProducto] = useState(null);
 
   useEffect(() => {
-    const encontrado = productosPerifericos.find((p) => p.id === parseInt(id));
+    const todosLosProductos = [
+      ...productosPerifericos,
+      ...productosElectrodomesticos,
+      ...productosComputacion
+    ];
+    const encontrado = todosLosProductos.find((p) => p.id === parseInt(id));
     setProducto(encontrado);
   }, [id]);
-
-  if (!producto) return <p>Producto no encontrado</p>;
+  
+  if (!producto) {
+    return (
+      <div style={{ padding: '2rem', background: '#222', borderRadius: '8px', textAlign: 'center' }}>
+        <h2 style={{ color: 'white' }}>Producto no encontrado</h2>
+      </div>
+    );
+  }
 
   const esAdmin = true; // simulado
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <h1>{producto.nombre}</h1>
-      <img src={producto.imagen} alt={producto.nombre} style={{ maxWidth: '300px', borderRadius: '8px' }} />
-      <p><strong>Precio:</strong> ${producto.precio}</p>
-      <p><strong>Descripción:</strong> {producto.descripcion}</p>
-
+    <div className={styles.contenedor}>
+      <h1 className={styles.titulo}>{producto.nombre}</h1>
+      <img src={producto.imagen} alt={producto.nombre} className={styles.imagen} />
+      <p className={styles.precio}><strong>Precio:</strong> ${producto.precio}</p>
+      <p className={styles.descripcion}><strong>Descripción:</strong> {producto.descripcion}</p>
+  
       {esAdmin && (
-        <div style={{ marginTop: '1rem' }}>
-          <button style={{ marginRight: '1rem' }}>Editar</button>
+        <div className={styles.botones}>
+          <button>Editar</button>
           <button>Eliminar</button>
         </div>
       )}
     </div>
   );
+  
 }
