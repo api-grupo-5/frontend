@@ -3,22 +3,19 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "../css/loginForm.module.css";
+import { useAuth } from "../context/auth";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await fetch("/api", {
-      method: "POST",
-      body: JSON.stringify({ email, password }),
-      headers: { "Content-Type": "application/json" },
-    });
-
-    if (res.ok) {
+    const success = await login(email, password);
+    if (success) {
       router.push("/home");
     } else {
       alert("Credenciales inválidas");
@@ -29,9 +26,9 @@ export default function LoginForm() {
     <div className={styles.loginContainer}>
       <div className={styles.logoContainer}>
         <img
-          src="/images/OnlyLogo.png" // Ruta del logo
+          src="/images/OnlyLogo.png"
           alt="Accelerate Logo"
-          className={styles.logo} 
+          className={styles.logo}
         />
       </div>
       <div className={styles.loginBox}>
