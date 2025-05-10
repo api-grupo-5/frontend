@@ -1,8 +1,9 @@
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import styles from "./css/main.module.css";
-import { Roboto } from 'next/font/google'
+import { Roboto } from 'next/font/google';
 import { CartProvider } from './context/CartManagement';
+import { AuthProvider } from './context/auth';
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -12,19 +13,20 @@ const roboto = Roboto({
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en"> 
+    <html lang="en">
       <head>
         <title>TecnoExpress</title>
       </head>
       <body className={`${styles.main} ${roboto.className}`}>
-        <Navbar/>
-        
-        <CartProvider>
-          {children}
-        </CartProvider>
+        <Navbar />
+        <AuthProvider>
+          <CartProvider>
+            {children}
+          </CartProvider>
+        </AuthProvider>
 
         <footer>
-          <Footer/>
+          <Footer />
         </footer>
       </body>
     </html>
