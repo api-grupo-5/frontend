@@ -49,7 +49,7 @@ export default function Navbar() {
         <div className={styles.categoryMenu}>
           <ul>
             <li><Link href="/categoria/computacion">Computación</Link></li>
-            <li><Link href="/categoria/televisores">Electrodomésticos</Link></li>
+            <li><Link href="/categoria/electrodomesticos">Electrodomésticos</Link></li>
             <li><Link href="/categoria/perifericos">Periféricos</Link></li>
             <li><Link href="/emular-venta">Cargar producto</Link></li>
           </ul>
