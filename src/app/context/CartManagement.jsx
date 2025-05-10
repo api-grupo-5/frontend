@@ -1,12 +1,14 @@
 'use client'
 import { createContext, useContext, useEffect, useState } from 'react';
+import { useNotifier } from '../context/NotifierManagent';
 
 const CartContext = createContext(null);
 
 export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const {notify} = useNotifier()
+  
   useEffect(() => {
     const storedCart = localStorage.getItem('cart');
     if (storedCart) {
@@ -31,8 +33,14 @@ export function CartProvider({ children }) {
     }
   }, [cart, loading]);
 
+  const pushNotification = (message, type = 'success') => {
+    const id = Date.now();
+    setNotifications((prev) => [...prev, { id, message, type }]);
+  };
+
   const addToCart = (producto) => {
     console.log(`[CartProvider] Agregando producto ${producto.title} al carrito...`);
+    notify("Producto agregado", "success");
     setCart((prev) => [...prev, producto]);
     console.log(`[CartProvider] Producto agregado al carrito`);
   };
@@ -46,6 +54,7 @@ export function CartProvider({ children }) {
   const removeFromCart = (id) => {
     console.log(`[CartProvider] Eliminando producto con ID ${id} del carrito...`);
     setCart((prev) => prev.filter((p) => p.id !== id));
+    notify("Producto eliminado", "success");
     console.log(`[CartProvider] Producto con ID ${id} eliminado`);
   };
 

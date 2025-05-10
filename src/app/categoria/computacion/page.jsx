@@ -1,24 +1,20 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import styles from '../perifericos/perifericos.module.css';
+import styles from '../../css/categories.module.css';
 import { productosComputacion } from '../../data/productos';
+import { useCart } from "../../context/CartManagement";
 
 const usuarioActual = 'tobias@demo.com';
 
 export default function ComputacionPage() {
   const [orden, setOrden] = useState('Todos');
-  const [carrito, setCarrito] = useState([]);
-
-  const agregarAlCarrito = (producto) => {
-    setCarrito([...carrito, producto]);
-    alert(`${producto.nombre} fue agregado al carrito`);
-  };
+  const { addToCart } = useCart()
 
   const ordenarProductos = (lista, criterio) => {
     const copia = [...lista];
-    if (criterio === 'Mayor precio') return copia.sort((a, b) => b.precio - a.precio);
-    if (criterio === 'Menor precio') return copia.sort((a, b) => a.precio - b.precio);
+    if (criterio === 'Mayor precio') return copia.sort((a, b) => b.price - a.price);
+    if (criterio === 'Menor precio') return copia.sort((a, b) => a.price - b.price);
     return copia;
   };
 
@@ -45,10 +41,10 @@ export default function ComputacionPage() {
                 <button className={styles.btnDetalleChico}>Ver detalle</button>
               </Link>
             </div>
-            <img src={producto.imagen} alt={producto.nombre} className={styles.imagenProducto} />
-            <h3>{producto.nombre}</h3>
-            <p>${producto.precio}</p>
-            <button className={styles.btnCarrito} onClick={() => agregarAlCarrito(producto)}>
+            <img src={producto.image} alt={producto.title} className={styles.imagenProducto} />
+            <h3>{producto.title}</h3>
+            <p>${producto.price}</p>
+            <button className={styles.btnCarrito} onClick={() => addToCart(producto)}>
               Agregar al carrito
             </button>
 
