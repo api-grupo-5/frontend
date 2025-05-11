@@ -10,7 +10,6 @@ export default function CartPage() {
       console.log("useEffect ejecutado en el cliente");
       try {
         const cartData = localStorage.getItem('cart');
-        console.log("cartData:", cartData);
         if (cartData) {
           setCarrito(JSON.parse(cartData));
         } else {
