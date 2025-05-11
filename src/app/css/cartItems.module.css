@@ -11,8 +11,10 @@
     align-items: center;
     gap: 1rem;
     border: 1px solid #1e1e1e;
+    position: relative;
 }
-  
+
+/* Imagen del producto */
 .cartItem img {
     width: 60px;
     height: 60px;
@@ -21,28 +23,30 @@
     background-color: #1e1e1e;
     padding: 0.25rem;
 }
-  
+
 .cartItem:hover {
     transform: translateY(-3px);
     box-shadow: 0 4px 12px #cda45e88;
     border-color: #cda45e;
 }
-  
+
+/* Detalles del artículo */
 .cartItemDetails {
     display: flex;
     flex-direction: column;
 }
-  
+
 .cartItemTitle {
     font-weight: bold;
     font-size: 1.1rem;
 }
-  
+
 .cartItemPrice {
     color: #cda45e;
     margin-top: 0.25rem;
 }
 
+/* Botón de eliminación */
 .removeButton {
     background: transparent;
     color: #cda45e;
@@ -51,8 +55,63 @@
     cursor: pointer;
     margin-left: auto;
     transition: color 0.2s ease;
-  }
-  
-  .removeButton:hover {
+}
+
+.removeButton:hover {
     color: red;
-  }
+}
+
+/* Controles de cantidad */
+.quantityControls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: opacity 0.3s ease; /* La transición de visibilidad */
+    position: absolute;
+    right: 3rem; /* Mueve los controles a la izquierda para no tapar el botón de eliminar */
+}
+
+.cartItem:hover .quantityControls {
+    opacity: 1; /* Los controles son visibles cuando se pasa el ratón sobre el artículo */
+}
+
+.quantityControls > button {
+    opacity: 0; /* Inicialmente los botones son invisibles */
+    transition: opacity 0.3s ease; /* La transición para la visibilidad */
+}
+
+/* Al pasar el mouse sobre el contenedor de controles de cantidad, mostrar los botones */
+.quantityControls:hover > button {
+    opacity: 1;
+}
+
+/* Cantidad */
+.cartItemQuantity {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #fffff0;
+}
+
+/* Botones de cantidad */
+.quantityButton {
+    background-color: #cda45e;
+    color: #1e1e1e;
+    border: none;
+    padding: 0.5rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.quantityButton:hover {
+    background-color: #b8954e;
+}
+
+/* Contenedor para cantidad y controles */
+.rightControls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: auto;
+}
