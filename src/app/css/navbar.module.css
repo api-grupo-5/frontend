@@ -38,6 +38,8 @@
   flex-grow: 1;
   display: flex;
   justify-content: center;
+  position: relative; /* importante */
+  z-index: auto;      /* o ningún z-index */
 }
 
 .searchBox {
@@ -103,4 +105,25 @@
 
 .categoryMenu li a:hover {
   color: #fff;
+}
+
+.searchResults {
+  position: absolute; /* o fixed, según tu diseño */
+  z-index: 9999;       /* importante para que esté al frente */
+  background-color: #1c1c1c; /* o el color que uses */
+  max-height: 400px;
+  overflow-y: auto;
+  width: 100%;
+  top: 60px; /* o lo que necesites según el tamaño del navbar */
+}
+
+
+.searchResults li {
+  padding: 0.5rem;
+  color: #fffff0;
+  cursor: pointer;
+}
+
+.searchResults li:hover {
+  background-color: #3a3a3c;
 }
