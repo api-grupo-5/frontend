@@ -3,7 +3,8 @@ import Footer from "./components/Footer";
 import styles from "./css/main.module.css";
 import { Roboto } from 'next/font/google';
 import { CartProvider } from './context/CartManagement';
-import { AuthProvider } from './context/auth';
+import { AuthProvider } from './context/LoginManagement';
+import { NotifierProvider } from './context/NotifierManagent';
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -19,12 +20,13 @@ export default function RootLayout({ children }) {
       </head>
       <body className={`${styles.main} ${roboto.className}`}>
         <Navbar />
-        <AuthProvider>
-          <CartProvider>
-            {children}
-          </CartProvider>
-        </AuthProvider>
-
+        <NotifierProvider>
+          <AuthProvider>
+            <CartProvider>
+              {children}
+            </CartProvider>
+          </AuthProvider>
+        </NotifierProvider>
         <footer>
           <Footer />
         </footer>
