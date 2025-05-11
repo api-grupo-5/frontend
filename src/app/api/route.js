@@ -5,9 +5,12 @@ const SECRET = 'clave_super_secreta';
 
 export async function POST(req) {
   const { email, password } = await req.json();
+  const accounts = {
+    "usuario@ejemplo.com": "1234",
+    "asd@asd.com": "1234"
+  }
 
-  // Usuario falso hardcodeado
-  if (email === 'usuario@ejemplo.com' && password === '1234') {
+  if (email in accounts && password === accounts[email]) {
     const token = jwt.sign(
       {
         email,
@@ -24,7 +27,7 @@ export async function POST(req) {
       path: '/',
     });
 
-    return new Response(JSON.stringify({ message: 'Login exitoso' }), {
+    return new Response(JSON.stringify({ ok:true, message: 'Login exitoso' }), {
       status: 200,
       headers: {
         'Set-Cookie': serialized,
@@ -32,7 +35,7 @@ export async function POST(req) {
     });
   }
 
-  return new Response(JSON.stringify({ message: 'Credenciales inválidas' }), {
+  return new Response(JSON.stringify({ ok: false, message: 'Credenciales inválidas' }), {
     status: 401,
   });
 }
