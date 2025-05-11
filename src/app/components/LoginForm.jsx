@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "../css/loginForm.module.css";
-import { useAuth } from "../context/auth";
+import { useAuth } from "../context/LoginManagement";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -17,8 +17,6 @@ export default function LoginForm() {
     const success = await login(email, password);
     if (success) {
       router.push("/home");
-    } else {
-      alert("Credenciales inválidas");
     }
   };
 
