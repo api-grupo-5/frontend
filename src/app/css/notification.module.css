@@ -1,0 +1,87 @@
+.notification {
+    bottom: 20px;
+    right: 20px;
+    min-width: 250px;
+    max-width: 400px;
+    padding: 12px 16px;
+    border-left: 5px solid;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: sans-serif;
+    font-size: 14px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.success {
+    background-color: #2d2d30;
+    border-left: 5px solid #cda45e;
+    color: #fffff0;
+}
+
+.warning {
+    background-color: #1e1e1e;
+    border-left: 5px solid #cda45e;
+    color: #fffff0;
+}
+  
+.error {
+    background-color: #2d2d30;
+    border-left: 5px solid #ea4335; /* Podés cambiar esto si preferís algo más armónico */
+    color: #fffff0;
+}
+  
+  
+.closeButton {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: 10px;
+    color: inherit;
+}
+  
+/* Animaciones */
+.slideIn {
+    transform: translateX(100%);
+    animation: slideInRight 0.3s forwards;
+}
+
+.slideOut {
+    animation: slideOutRight 0.3s forwards;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0%);
+        opacity: 1;
+    }
+    }
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0%);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.notificationContainer {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 9999;
+}
+  
