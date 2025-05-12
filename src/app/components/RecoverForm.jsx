@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useNotifier } from "../context/NotifierManagent";
 import styles from "../css/recoverForm.module.css";
 
 export default function RecoverForm() {
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
+  const { notify } = useNotifier();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,9 +18,9 @@ export default function RecoverForm() {
     });
 
     if (res.ok) {
-      setMessage("Se ha enviado un enlace de recuperación a tu correo.");
+      notify("Se ha enviado un enlace de recuperación a tu correo.", "success");
     } else {
-      setMessage("No se pudo enviar el enlace. Verifica tu correo.");
+      notify("No se pudo enviar el enlace. Verifica tu correo.", "error");
     }
   };
 
@@ -44,7 +45,6 @@ export default function RecoverForm() {
             Enviar Enlace
           </button>
         </form>
-        {message && <p className={styles.recoverMessage}>{message}</p>}
       </div>
     </div>
   );
