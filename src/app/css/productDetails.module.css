@@ -94,3 +94,49 @@
   padding: 1rem;
   border-radius: 8px;
 }
+
+.editarInput,
+.editarTextarea {
+  background-color: #2d2d30;
+  color: #fffff0;
+  border: 2px solid #cda45e;
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  max-width: 850px;
+  margin-bottom: 1rem;
+  font-weight: 500;
+  
+}
+
+.editarTextarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+
+.botonGuardarCambios {
+  display: flex;
+  justify-content: space-between; /* Esto separa los botones entre sí */
+  align-items: center;  /* Centra verticalmente los botones */
+  max-width: 900px;
+}
+
+.botonGuardarCambios button{
+  background-color: #cda45e;
+  color: #1e1e1e;
+  padding: 0.8rem 2rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: fit-content;
+}
+
+#delete {
+  background-color: red;
+  color: white;
+  flex: end;
+}
