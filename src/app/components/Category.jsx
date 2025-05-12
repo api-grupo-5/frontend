@@ -41,7 +41,7 @@ export default function CategoryPage({ categoria }) {
       <div className={styles.grid}>
         {productosOrdenados.map((producto, index) => (
             <div key={index} className={styles.card}>
-                <div key={index + productosOrdenados.length + 1} onClick={() => handleRedirigir(producto)}>
+                <div key={index + productosOrdenados.length + 1}>
                     <img src={producto.image} alt={producto.title} className={styles.imagenProducto} />
                     <h3>{producto.title}</h3>
                     <p>${producto.price}</p>
