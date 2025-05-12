@@ -138,3 +138,14 @@
 .add_to_cart_btn:hover {
     background-color: #e1b865;
 }
+
+.catalog_main button {
+    background-color: #cda45e;
+    border: none;
+    color: #1c1c1c;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 0.5rem;
+}

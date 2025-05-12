@@ -2,25 +2,17 @@
 
 import styles from "../css/carousel.module.css";
 import Product from "./Product";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useCart } from '../context/CartManagement';
+import { products } from "../data/products";
 
 export default function Carousel() {
-    const [products, setProducts] = useState([]);
     const { addToCart } = useCart();
     const scrollRef = useRef(null);
     const timeoutRef = useRef(null);
-    const CARD_WIDTH = process.env.CARD_WIDTH;
-    const apiUrl = process.env.NEXT_PUBLIC_FAKE_STORE_API;
-
-    useEffect(() => {
-        fetch(apiUrl)
-            .then(res => res.json())
-            .then(data => {setProducts(data)})
-            .catch(error => console.error("Error al cargar productos:", error));
-    }, []);
-    const loopedProducts = [...products, ...products];
+    const CARD_WIDTH = process.env.NEXT_PUBLIC_CARD_WIDTH;
+    const loopedProducts = [...Object.values(products["computacion"]), ...Object.values(products["electrodomesticos"]), ...Object.values(products["perifericos"])];
 
     const pauseAutoScroll = () => clearTimeout(timeoutRef.current);
     const resumeAutoScroll = () => {
@@ -87,6 +79,11 @@ export default function Carousel() {
         }
     };
 
+    const handleRedirigir = (producto) => {
+        const url = `/producto/${producto.id}`;
+        window.open(url, '_blank'); 
+      };
+
     return (
         <div className={styles.catalog_wrapper}>
             <h1 className={styles.catalog_titles}>¡Explora todo lo que tenemos para ofrecerte!</h1>
@@ -105,9 +102,11 @@ export default function Carousel() {
                         title={product.title}
                         image={product.image}
                         price={product.price}
+                        seller={product.seller}
                         onHoverStart={pauseAutoScroll}
                         onHoverEnd={resumeAutoScroll}
                         onAddToCart={() => addToCart(product)}
+                        onClick={() => handleRedirigir(product)}
                     />
                 ))}
             </div>
