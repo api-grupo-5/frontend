@@ -20,10 +20,11 @@ export default function Product({ title, image, price, seller, onHoverStart, onH
                 <div>
                     <button onClick={onClick}>Editar producto</button>
                 </div>
-                ) : 
+                ) : (
                 <button className={styles.add_to_cart_btn} onClick={onAddToCart}>
                     Agregar al carrito
                 </button>
+                )
             }
         </div>
     );
