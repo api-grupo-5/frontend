@@ -19,7 +19,7 @@ export default function CategoryPage({ categoria }) {
 
   const handleRedirigir = (producto) => {
     const url = `/producto/${producto.id}`;
-    window.open(url, '_blank');  // '_blank' abre el enlace en una nueva pestaña
+    window.open(url, '_blank');
   };
 
   // Obtener los productos de la categoría dinámica
@@ -46,11 +46,10 @@ export default function CategoryPage({ categoria }) {
                     <h3>{producto.title}</h3>
                     <p>${producto.price}</p>
                 </div>
-                {user && producto.seller == user.email ? (
-                    <div className={styles.botonesAdmin}>
-                        <button className={styles.btnEditar}>Editar</button>
-                        <button className={styles.btnEliminar}>Eliminar</button>
-                    </div>
+                {user && (producto.seller == user.email || user.role == "admin") ? (
+                    <>
+                        <button onClick={() => handleRedirigir(producto)}>Editar producto</button>
+                    </>
                     ) : 
                     <button className={styles.btnCarrito} onClick={() => addToCart(producto)}>
                         Agregar al carrito
