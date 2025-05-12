@@ -26,12 +26,12 @@ export function NotifierProvider({ children }) {
       {children}
       {notifications.length > 0 && (
         <div className={styles.notificationContainer}>
-          {notifications.map((n) => (
+          {notifications.map((n, index) => (
             <Notification
-              key={n.id}
+              key={n.request_id + index + 1}
               message={n.message}
               type={n.type}
-              onClose={() => removeNotification(n.id)}
+              onClose={() => removeNotification(n.request_id)}
             />
           ))}
         </div>
