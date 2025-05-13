@@ -1,3 +1,18 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
 .main{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
     background-color: #2d2d30;
+    margin: 0;
+    padding: 0;
+}
+
+.logo {
+    width: 100%;
+    height: auto;
 }

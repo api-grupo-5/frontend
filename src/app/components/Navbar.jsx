@@ -38,7 +38,7 @@ export default function Navbar() {
               src="/images/logo.png"
               alt="TecnoExpress logo"
               width={350}
-              height={50}
+              height={77}
             />
           </Link>
         </div>
@@ -51,6 +51,7 @@ export default function Navbar() {
               placeholder="Buscar productos..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              className={styles.search_input}
             />
             <FaSearch className={styles.searchIcon} />
           </div>
@@ -71,11 +72,16 @@ export default function Navbar() {
         {/* Iconos */}
         <div className={styles.right}>
           <div className={styles.icons}>
-            <div onClick={() => redirect("/login")}>
+            <div onClick={() => redirect("/login")}
+              className={styles.userIcon}
+              title="Ir a mi perfil">
               <FaUser />
             </div>
             
-            <div onClick={() => redirect("/cart")}>
+            <div onClick={() => redirect("/cart")}
+              className={styles.userIcon}
+              title="Ver mi carrito"
+              >
               <FaShoppingCart />
             </div>
           </div>

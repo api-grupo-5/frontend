@@ -37,7 +37,7 @@ export default function EmularVenta() {
     <main className={styles.contenedor}>
       <h1>Venta de producto</h1>
       <form onSubmit={handleSubmit} className={styles.formulario}>
-        <label>Nombre:</label>
+        <label>Nombre del producto:</label>
         <input type="text" name="nombre" value={form.nombre} onChange={handleChange} required />
 
         <label>Precio:</label>
@@ -54,7 +54,7 @@ export default function EmularVenta() {
 
         <label>Categoría:</label>
         <select name="categoria" value={form.categoria} onChange={handleChange} required>
-          <option value="">Seleccionar</option>
+          <option value="" disabled hidden>Seleccionar</option>
           <option value="perifericos">Periféricos</option>
           <option value="computacion">Computación</option>
           <option value="electrodomesticos">Electrodomésticos</option>

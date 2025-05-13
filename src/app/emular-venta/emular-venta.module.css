@@ -24,7 +24,7 @@
 
 .contenedor {
   padding: 2rem;
-  max-width: 600px;
+  min-width: 500px;
   margin: 0 auto;
   color: #fff;
 }
