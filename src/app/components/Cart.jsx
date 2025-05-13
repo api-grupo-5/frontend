@@ -37,7 +37,7 @@ export default function Cart() {
     <div>
     {cart && cart.length > 0 ?(
       <div>
-        <h1>Bienvenido{user.email? `, ${user.email}`:""}</h1>
+        <h1>Bienvenido{user && user.email ? `, ${user.email}`:""}!</h1>
         <p>Tenes {cart.reduce((acc, item) => acc + item.quantity, 0)} productos en tu carrito</p>
         <div className={styles.cartLayout}>
           <div className={styles.cartItems}>
