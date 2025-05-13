@@ -2,7 +2,7 @@ import styles from '../css/footer.module.css';;
 
 export default function Footer() {
   return (
-    <footer className={styles.footer}>
+    <footer className={`${styles.footer} ${styles.footerSticky}`}>
       <div className={styles.footer_container}>
         <div className={styles.footer_section}>
           <h4>Sobre nosotros</h4>
@@ -10,7 +10,7 @@ export default function Footer() {
         </div>
         <div className={styles.footer_section}>
           <h4>Enlaces útiles</h4>
-          <ul>
+          <ul className={styles.footer_list}>
             <li><a href="#">Inicio</a></li>
             <li><a href="/categoria/computacion">Computación</a></li>
             <li><a href="/categoria/electrodomesticos">Electrodomésticos</a></li>

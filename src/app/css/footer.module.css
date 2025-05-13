@@ -5,6 +5,10 @@
     border-top: 1px solid #444;
 }
 
+.footerSticky {
+    margin-top: auto; 
+}
+
 .footer_container {
     display: flex;
     justify-content: space-between;
@@ -38,4 +42,9 @@
     padding-top: 20px;
     font-size: 13px;
     color: #888;
+}
+
+.footer_list {
+    padding: 0;
+    list-style: none;
 }

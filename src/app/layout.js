@@ -27,9 +27,7 @@ export default function RootLayout({ children }) {
             </CartProvider>
           </AuthProvider>
         </NotifierProvider>
-        <footer>
-          <Footer />
-        </footer>
+        <Footer />
       </body>
     </html>
   );
