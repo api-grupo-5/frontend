@@ -21,11 +21,11 @@ export default function RootLayout({ children }) {
       <body className={`${styles.main} ${roboto.className}`}>
         <Navbar />
         <NotifierProvider>
-          <AuthProvider>
-            <CartProvider>
+          <CartProvider>
+            <AuthProvider>
               {children}
-            </CartProvider>
-          </AuthProvider>
+            </AuthProvider>
+          </CartProvider>
         </NotifierProvider>
         <footer>
           <Footer />

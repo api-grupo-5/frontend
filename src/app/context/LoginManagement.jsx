@@ -1,30 +1,31 @@
-// context/LoginManagement.jsx
 'use client';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useNotifier } from "../context/NotifierManagent";
+import { useCart } from '../context/CartManagement';
+import {jwtDecode } from 'jwt-decode';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({ email: null, role: null, cart: []});
   const [loading, setLoading] = useState(true);
   const { notify } = useNotifier()
-  const router = useRouter();
+  const { saveCart, loadCart } = useCart()
   const request_id = Date.now()
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const parsed = JSON.parse(storedUser).user;
+      setUser({ email: parsed.email, role: parsed.role, cart: parsed.cart });
     }
     setLoading(false);
   }, []);
 
   useEffect(() => {
     if (!loading) {
-      if (user) {
-        localStorage.setItem('user', JSON.stringify(user));
+      if (user.email) {
+        localStorage.setItem('user', JSON.stringify({user}));
       } else {
         localStorage.removeItem('user');
       }
@@ -32,31 +33,35 @@ export function AuthProvider({ children }) {
   }, [user, loading]);
 
   const login = async (email, password) => {
-    const res = await fetch('/api', {
+    const res = await fetch('/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
     });
 
     if (res.ok) {
-      const userData = { email };
-      setUser(userData);
-      notify(`Bienvenido nuevamente, ${email}!`, "success");
-      console.log(`${request_id} - [AuthProvider] - Usuario '${email}' conectado correctamente`)
+      const { token } = await res.json();
+      const decoded = jwtDecode(token);
+
+      setUser({ email: decoded.email, role: decoded.role, cart: decoded.cart });
+      await loadCart(decoded.email)
+      notify(`Bienvenido nuevamente, ${decoded.email}!`, "success");
+      console.log(`${request_id} - [AuthProvider] - Usuario '${decoded.email}' conectado correctamente`)
     } else {
       notify('Credenciales inválidas', "error");
       console.log(`${request_id} - [AuthProvider] - Credenciales invalidas`)
     }
-
-    return res.ok
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
+  const logout = async () => {
+    const email = user.email
+
+    await saveCart(email)
     notify(`Nos vemos pronto, ${email}!`, "success");
+    setUser({ email: null, role: null, cart: []});
+    localStorage.removeItem('user');
+    
     console.log(`${request_id} - [AuthProvider] - Usuario '${email}' desconectado correctamente`)
-    router.push('/login');
   };
   
   return (

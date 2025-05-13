@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import styles from "../css/registerForm.module.css";
+import { useNotifier } from "../context/NotifierManagent";
+import {redirect} from "next/navigation"
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState({
@@ -13,6 +15,8 @@ export default function RegisterForm() {
     phone: "",
   });
 
+  const {notify} = useNotifier()
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -22,20 +26,21 @@ export default function RegisterForm() {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Las contraseñas no coinciden.");
+      notify("Las contraseñas no coinciden.", "error");
       return;
     }
 
     const res = await fetch("/api/register", {
       method: "POST",
-      body: JSON.stringify(formData),
+      body: JSON.stringify({ email: formData.email, password: formData.password }),
       headers: { "Content-Type": "application/json" },
     });
 
     if (res.ok) {
-      alert("Registro exitoso. Ahora puedes iniciar sesión.");
+      notify("Registro exitoso. Ahora puedes iniciar sesión.", "success");
+      redirect("/login")
     } else {
-      alert("Hubo un problema con el registro. Inténtalo nuevamente.");
+      notify("Hubo un problema con el registro. Inténtalo nuevamente.", "error");
     }
   };
 

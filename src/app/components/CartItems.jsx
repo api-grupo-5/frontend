@@ -2,9 +2,7 @@ import styles from '../css/cartItems.module.css';
 
 export default function CartItem({ id, title, image, price, quantity, onRemove, onQuantityChange }) {
   const handleDecrement = () => {
-    if (quantity > 1) {
-      onQuantityChange(id, quantity - 1);
-    }
+    onQuantityChange(id, quantity - 1);
   };
 
   const handleIncrement = () => {

@@ -16,19 +16,19 @@
 }
 
 .success {
-    background-color: #2d2d30;
-    border-left: 5px solid #cda45e;
+    background-color: #1e1e1e;
+    border-left: 5px solid #34a853;
     color: #fffff0;
 }
 
-.warning {
+.info {
     background-color: #1e1e1e;
-    border-left: 5px solid #cda45e;
+    border-left: 5px solid #42b5f5;
     color: #fffff0;
 }
   
 .error {
-    background-color: #2d2d30;
+    background-color: #1e1e1e;
     border-left: 5px solid #ea4335; /* Podés cambiar esto si preferís algo más armónico */
     color: #fffff0;
 }

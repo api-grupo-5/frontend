@@ -11,7 +11,7 @@ export function CartProvider({ children }) {
   const request_id = Date.now()
   
   useEffect(() => {
-    const storedCart = localStorage.getItem('cart');
+    const storedCart = localStorage.getItem('user')?.cart;
     if (storedCart) {
       console.log("[CartProvider] Obteniendo carrito desde localStorage...");
       let json = JSON.parse(storedCart) 
@@ -29,9 +29,7 @@ export function CartProvider({ children }) {
       let json = JSON.stringify(cart)
       localStorage.setItem('cart', json);
       console.log(`[CartProvider] Carrito cargado`);
-    } else {
-      console.log("[CartProvider] Todavía no terminó de cargar el carrito!")
-    }
+    } 
   }, [cart, loading]);
 
   const addToCart = (producto) => {
@@ -63,6 +61,7 @@ export function CartProvider({ children }) {
     console.log('[CartProvider] Vaciando carrito...');
     notify("Compra realizada correctamente!", "success")
     setCart([]);
+    localStorage.setItem('cart', []);
     console.log('[CartProvider] Carrito vaciado');
   };
 
@@ -73,8 +72,47 @@ export function CartProvider({ children }) {
     notify("Producto eliminado", "success");
   };
 
+  const saveCart = async (userEmail) => {
+    console.log(`${request_id} - [CartProvider] Guardando carrito del usuario...`);
+    const actualCart = JSON.parse(localStorage.getItem('cart'));
+    console.log(actualCart)
+    console.log(typeof(actualCart))
+    if (actualCart && actualCart.length){
+      const res = await fetch('/api/cart', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: userEmail, cart: actualCart})
+      });
+  
+      if (res.ok) {
+        console.log(`${request_id} - [CartProvider] Carrito del usuario guardado correctamente...`);
+      } else {
+        console.log(`${request_id} - [CartProvider] No se pudo guardar el carrito del usuario`)
+      }
+    }
+    localStorage.removeItem('cart');
+  }
+
+  const loadCart = async (userEmail) => {
+    console.log(`${request_id} - [CartProvider] Cargando carrito del usuario...`);
+    if (userEmail){
+      const res = await fetch('/api/cart', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', 'Email': userEmail }
+      });
+      
+      console.log("Respuesta de la API: ", res);
+      if (res.ok) {
+        console.log(`${request_id} - [CartProvider] Carrito del usuario guardado correctamente...`);
+        localStorage.setItem('cart', res.cart_data);
+      } else {
+        console.log(`${request_id} - [CartProvider] No se pudo guardar el carrito del usuario`)
+      }
+    }
+  }
+
   return (
-    <CartContext.Provider value={{ cart, addToCart, clearCart, removeFromCart, updateCartItemQuantity, loading }}>
+    <CartContext.Provider value={{ cart, saveCart, loadCart, addToCart, clearCart, removeFromCart, updateCartItemQuantity, loading }}>
       {children}
     </CartContext.Provider>
   );

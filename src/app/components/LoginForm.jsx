@@ -9,7 +9,7 @@ export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, user, logout } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,42 +30,51 @@ export default function LoginForm() {
         />
       </div>
       <div className={styles.loginBox}>
-        <h1 className={styles.loginHeader}>Bienvenido</h1>
-        <form onSubmit={handleSubmit} className={styles.loginForm}>
-          <label htmlFor="email" className={styles.loginLabel}>
-            Correo Electrónico o Usuario
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Ingrese su correo o usuario"
-            className={styles.loginInput}
-            required
-          />
-          <label htmlFor="password" className={styles.loginLabel}>
-            Contraseña
-          </label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Ingrese su contraseña"
-            className={styles.loginInput}
-            required
-          />
-          <button type="submit" className={styles.loginButton}>
-            Continuar
-          </button>
-        </form>
-        <p className={styles.loginFooter}>
-          ¿Olvidaste tu contraseña? <a href="/recover">Recupérala aquí</a>
-        </p>
-        <p className={styles.loginFooter}>
-          ¿No tienes una cuenta? <a href="/register">Crea una aquí</a>
-        </p>
+        {user && user.email ? (
+          <>
+            <h2>Hola {user.email}!</h2>
+            <h2 onClick={() => logout()}>Ya estas conectado, pero podes desconectarte haciendome click!</h2>
+          </>
+          ):(
+          <>
+            <h1 className={styles.loginHeader}>Bienvenido</h1>
+            <form onSubmit={handleSubmit} className={styles.loginForm}>
+              <label htmlFor="email" className={styles.loginLabel}>
+                Correo Electrónico o Usuario
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Ingrese su correo o usuario"
+                className={styles.loginInput}
+                required
+              />
+              <label htmlFor="password" className={styles.loginLabel}>
+                Contraseña
+              </label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Ingrese su contraseña"
+                className={styles.loginInput}
+                required
+              />
+              <button type="submit" className={styles.loginButton}>
+                Continuar
+              </button>
+            </form>
+            <p className={styles.loginFooter}>
+              ¿Olvidaste tu contraseña? <a href="/recover">Recupérala aquí</a>
+            </p>
+            <p className={styles.loginFooter}>
+              ¿No tienes una cuenta? <a href="/register">Crea una aquí</a>
+            </p>
+          </>
+        )}
       </div>
     </div>
   );

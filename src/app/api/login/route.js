@@ -1,20 +1,24 @@
 import jwt from 'jsonwebtoken';
 import { serialize } from 'cookie';
+import { users } from "../../data/users"
+import crypto from 'crypto';
 
 const SECRET = 'clave_super_secreta';
 
+function hashPassword(password) {
+  return crypto.createHash('sha256').update(password).digest('hex');
+}
+
 export async function POST(req) {
   const { email, password } = await req.json();
-  const accounts = {
-    "usuario@ejemplo.com": "1234",
-    "asd@asd.com": "1234"
-  }
+  console.log(users)
 
-  if (email in accounts && password === accounts[email]) {
+  if (email in users && hashPassword(password) === users[email]["password"]) {
     const token = jwt.sign(
       {
         email,
-        carrito: [],
+        cart: users[email]["cart"],
+        role: users[email]["role"]
       },
       SECRET,
       { expiresIn: '1h' }
@@ -27,7 +31,7 @@ export async function POST(req) {
       path: '/',
     });
 
-    return new Response(JSON.stringify({ ok:true, message: 'Login exitoso' }), {
+    return new Response(JSON.stringify({ ok:true, token: token, message: 'Login exitoso' }), {
       status: 200,
       headers: {
         'Set-Cookie': serialized,

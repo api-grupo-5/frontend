@@ -7,7 +7,6 @@ import { redirect } from "next/navigation";
 import { products } from '../data/products';
 import { useState, useEffect } from 'react';
 
-
 export default function Navbar() {
   const [search, setSearch] = useState('');
   const [results, setResults] = useState([]);
@@ -89,7 +88,7 @@ export default function Navbar() {
             <li><Link href="/categoria/computacion">Computación</Link></li>
             <li><Link href="/categoria/electrodomesticos">Electrodomésticos</Link></li>
             <li><Link href="/categoria/perifericos">Periféricos</Link></li>
-            <li><Link href="/emular-venta">Vender</Link></li>
+            <li><Link href="/sell">Vender</Link></li>
           </ul>
         </div>
       </div>

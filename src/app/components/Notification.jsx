@@ -7,10 +7,7 @@ export default function Notification({ message, type = 'success', duration = 400
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setExiting(true);
-      setTimeout(() => {
-        if (onClose) onClose();
-      }, 300); 
+        handleClose()
     }, duration);
 
     return () => clearTimeout(timer);
