@@ -74,23 +74,26 @@ export function CartProvider({ children }) {
 
   const saveCart = async (userEmail) => {
     console.log(`${request_id} - [CartProvider] Guardando carrito del usuario...`);
-    const actualCart = JSON.parse(localStorage.getItem('cart'));
-    console.log(actualCart)
-    console.log(typeof(actualCart))
-    if (actualCart && actualCart.length){
-      const res = await fetch('/api/cart', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: userEmail, cart: actualCart})
-      });
-  
-      if (res.ok) {
-        console.log(`${request_id} - [CartProvider] Carrito del usuario guardado correctamente...`);
-      } else {
-        console.log(`${request_id} - [CartProvider] No se pudo guardar el carrito del usuario`)
+
+    if(localStorage.getItem('cart')){
+      const actualCart = JSON.parse(localStorage.getItem('cart'));
+      console.log(actualCart)
+      console.log(typeof(actualCart))
+      if (actualCart && actualCart.length){
+        const res = await fetch('/api/cart', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: userEmail, cart: actualCart})
+        });
+    
+        if (res.ok) {
+          console.log(`${request_id} - [CartProvider] Carrito del usuario guardado correctamente...`);
+        } else {
+          console.log(`${request_id} - [CartProvider] No se pudo guardar el carrito del usuario`)
+        }
       }
+      localStorage.removeItem('cart');
     }
-    localStorage.removeItem('cart');
   }
 
   const loadCart = async (userEmail) => {

@@ -1,5 +1,5 @@
 export const products = {
-  "last_id": 43,
+  "last_id": 44,
   "perifericos": {
     "1": {
       "title": "Auriculares SteelSeries",
@@ -96,6 +96,14 @@ export const products = {
       "description": "Mouse inalámbrico confiable con gran duración de batería.",
       "id": 12,
       "seller": "usuario@ejemplo.com"
+    },
+    "44": {
+      "title": "123",
+      "price": "123",
+      "description": "123",
+      "image": "123",
+      "seller": "123@123.com",
+      "id": 44
     }
   },
   "electrodomesticos": {
@@ -197,14 +205,6 @@ export const products = {
     }
   },
   "computacion": {
-    "25": {
-      "title": "Mother ASUS 1080\"",
-      "price": 899.99,
-      "image": "/images/tarjeta.jpeg",
-      "description": "Motherboard ASUS con soporte para gaming de alta gama.",
-      "id": 25,
-      "seller": "tobias@demo.com"
-    },
     "26": {
       "title": "Placa de Video NVIDIA RTX 4060",
       "price": 549.99,
