@@ -197,14 +197,6 @@ export const products = {
     }
   },
   "computacion": {
-    "25": {
-      "title": "Mother ASUS 1080\"",
-      "price": 899.99,
-      "image": "/images/tarjeta.jpeg",
-      "description": "Motherboard ASUS con soporte para gaming de alta gama.",
-      "id": 25,
-      "seller": "tobias@demo.com"
-    },
     "26": {
       "title": "Placa de Video NVIDIA RTX 4060",
       "price": 549.99,

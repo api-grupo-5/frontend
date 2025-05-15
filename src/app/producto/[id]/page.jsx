@@ -7,6 +7,8 @@ import { useCart } from '../../context/CartManagement';
 import { useNotifier } from '../../context/NotifierManagent';
 import styles from '../../css/productDetails.module.css';
 import { redirect } from "next/navigation";
+import 'react-confirm-alert/src/react-confirm-alert.css';
+import { confirmAlert } from 'react-confirm-alert';
 
 export default function DetalleProducto() {
   const { id } = useParams();
@@ -91,42 +93,55 @@ export default function DetalleProducto() {
     redirect(path)
   }
 
-  const handleEliminarProducto = async (item) => {
-    const productId = parseInt(id)
-    let categoriaProducto = null
-
-    for(let categoria in products){
-      try{
-        if (products[categoria][productId].id = productId){
-          const res = await fetch("/api/products", {
-            method: "DELETE",
-            body: JSON.stringify(
-              { 
-                id: productId,
-                categoria: categoria
-              }
-            ),
-            headers: { "Content-Type": "application/json" },
-          });
-  
-          console.log("Respuesta de la API: ", res);
-  
-          if (res.ok) {
-            notify("Se ha eliminado el producto correctamente.", "success");
-            categoriaProducto = categoria
-          } else {
-            notify("No se pudo eliminar el articulo.", "error");
-          }
-          break
-        }
-      }  catch{
-        console.log("Buscando categoria del producto...")
+const handleEliminarProducto = (item) => {
+  confirmAlert({
+    title: '¿Eliminar producto?',
+    message: '¿Estás seguro que querés eliminar este producto?',
+    buttons: [
+      {
+        label: 'Sí, eliminar',
+        onClick: () => eliminarProducto(item) // Separás la lógica real acá
+      },
+      {
+        label: 'Cancelar',
+        onClick: () => console.log("Cancelado")
       }
+    ]
+  });
+};
+
+const eliminarProducto = async (item) => {
+  const productId = parseInt(id);
+  let categoriaProducto = null;
+
+  for (let categoria in products) {
+    try {
+      if (products[categoria][productId].id === productId) {
+        const res = await fetch("/api/products", {
+          method: "DELETE",
+          body: JSON.stringify({
+            id: productId,
+            categoria: categoria
+          }),
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (res.ok) {
+          notify("Se ha eliminado el producto correctamente.", "success");
+          categoriaProducto = categoria;
+        } else {
+          notify("No se pudo eliminar el artículo.", "error");
+        }
+        break;
+      }
+    } catch {
+      console.log("Buscando categoría del producto...");
     }
-    const path = `/categoria/${categoriaProducto}`
-    redirect(path)
   }
 
+  const path = `/categoria/${categoriaProducto}`;
+  redirect(path);
+};
 
   const handleCantidadChange = (e) => {
     const value = parseInt(e.target.value);
