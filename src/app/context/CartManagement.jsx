@@ -32,32 +32,21 @@ export function CartProvider({ children }) {
     } 
   }, [cart, loading]);
 
-const addToCart = (producto) => {
-  const user = localStorage.getItem('user');
-  
-  if (!user) {
-    notify("Debes iniciar sesión para agregar productos al carrito", "error");
-    return;
-  }
-
-  console.log(`${request_id} - [CartProvider] Agregando producto '[ID: ${producto.id}] ${producto.title}' al carrito...`);
-  
-  // Proceder a agregar el producto al carrito
-  setCart((prev) => {
-    const existingProduct = prev.find((p) => p.id === producto.id);
-    if (existingProduct) {
-      return prev.map((p) =>
-        p.id === producto.id ? { ...p, quantity: p.quantity + 1 } : p
-      );
-    } else {
-      return [...prev, { ...producto, quantity: 1 }];
-    }
-  });
-
-  console.log(`${request_id} - [CartProvider] Producto agregado al carrito`);
-  notify("Producto agregado al carrito", "success");
-};
-
+  const addToCart = (producto) => {
+    console.log(`${request_id} - [CartProvider] Agregando producto '[ID: ${producto.id}] ${producto.title}' al carrito...`);
+    setCart((prev) => {
+      const existingProduct = prev.find((p) => p.id === producto.id);
+      if (existingProduct) {
+        return prev.map((p) =>
+          p.id === producto.id ? { ...p, quantity: p.quantity + 1 } : p
+        );
+      } else {
+        return [...prev, { ...producto, quantity: 1 }];
+      }
+    });
+    console.log(`${request_id} - [CartProvider] Producto agregado al carrito`);
+    notify("Producto agregado al carrito", "success");
+  };
 
   const updateCartItemQuantity = (id, newQuantity) => {
     console.log(`${request_id} - [CartProvider] Actualizando cantidad del producto en el carrito con ID ${id} a ${newQuantity}`);
