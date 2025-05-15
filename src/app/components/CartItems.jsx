@@ -15,10 +15,10 @@ export default function CartItem({ id, title, image, price, quantity, onRemove, 
   };
 
   return (
-    <li className={styles.cartItem} onClick={() => handleRedirigir(id)}>
+    <li className={styles.cartItem}>
       <img src={image} alt={title} />
       <div className={styles.cartItemDetails}>
-        <span className={styles.cartItemTitle}>{title}</span>
+        <span className={styles.cartItemTitle} onClick={() => handleRedirigir(id)}>{title}</span>
         <span className={styles.cartItemPrice}>${price.toFixed(2)}</span>
       </div>
       <div className={styles.quantityControls}>

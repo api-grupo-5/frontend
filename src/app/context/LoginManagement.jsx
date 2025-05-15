@@ -26,9 +26,7 @@ export function AuthProvider({ children }) {
     if (!loading) {
       if (user.email) {
         localStorage.setItem('user', JSON.stringify({user}));
-      } else {
-        localStorage.removeItem('user');
-      }
+      } 
     }
   }, [user, loading]);
 
