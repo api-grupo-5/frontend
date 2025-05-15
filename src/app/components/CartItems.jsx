@@ -9,8 +9,13 @@ export default function CartItem({ id, title, image, price, quantity, onRemove, 
     onQuantityChange(id, quantity + 1);
   };
   
+  const handleRedirigir = (id) => {
+    const url = `/producto/${id}`;
+    window.open(url, '_blank');
+  };
+
   return (
-    <li className={styles.cartItem}>
+    <li className={styles.cartItem} onClick={() => handleRedirigir(id)}>
       <img src={image} alt={title} />
       <div className={styles.cartItemDetails}>
         <span className={styles.cartItemTitle}>{title}</span>

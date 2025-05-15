@@ -46,15 +46,14 @@ export default function CategoryPage({ categoria }) {
                     <h3>{producto.title}</h3>
                     <p>${producto.price}</p>
                 </div>
-                {user && (producto.seller == user.email || user.role == "admin") ? (
-                    <>
-                        <button onClick={() => handleRedirigir(producto)}>Editar producto</button>
-                    </>
-                    ) : 
-                    <button className={styles.btnCarrito} onClick={() => addToCart(producto)}>
-                        Agregar al carrito
-                    </button>
-                }
+                 
+                <button className={styles.btnCarrito} onClick={() => handleRedirigir(producto)}>
+                  {user && (producto.seller == user.email || user.role == "admin") ? "Editar producto" : "Ver más información"}
+                </button>
+                 
+                <button className={styles.btnCarrito} onClick={() => addToCart(producto)}>
+                  Agregar al carrito
+                </button>
             </div>
         ))}
       </div>

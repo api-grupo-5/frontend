@@ -1,117 +1,117 @@
 .catalogo {
-    padding: 2rem;
-    color: white;
-  }
+  padding: 2rem;
+  color: white;
+}
   
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 1.5rem;
-  }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
   
-  .card {
-    background-color: #2d2d30;
-    padding: 1.5rem;
-    border-radius: 12px;
-    text-align: center;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  
-  .card img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-    border-radius: 6px;
-    margin-bottom: 1rem;
-  }
-  
-  .card h3 {
-    color: #fffff0;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-    min-height: 3em; /* Ajusta según la cantidad de líneas esperadas */
-  }
-  
-  .card p {
-    color: #cda45e;
-    font-weight: bold;
-  }
-  
-  .card button {
-    background-color: #cda45e;
-    border: none;
-    color: #1c1c1c;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 0.5rem;
-  }
+.card {
+  background-color: #2d2d30;
+  padding: 1.5rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 
-  .filtro {
-    margin-bottom: 1rem;
-    font-size: 1rem;
-    color: white;
-  }
+.card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
   
-  .filtro select {
-    margin-left: 0.5rem;
-    padding: 0.3rem;
-    border-radius: 4px;
-  }
+.card h3 {
+  color: #fffff0;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  min-height: 3em; /* Ajusta según la cantidad de líneas esperadas */
+}
   
-  .imagenProducto {
-    width: 500%;
-    height: 280px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 20rem;
-  }
-  
-  .cardHeader {
-    display: flex;
-    justify-content: flex-end;
-  }
-  
-  .btnDetalleChico {
-    font-size: 0.7rem;
-    padding: 4px 8px;
-    background-color: #444;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .btnDetalleChico:hover {
-    background-color: #666;
-  }
-  
-  .btnCarrito {
-    margin-top: 10px;
-    padding: 10px 16px;
-    color: #000;
-    font-weight: bold;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    background-color: #0066ff;
-    color: white;
-    border: none;
-    border-radius: 8px;
-  }
-  
-  .btnCarrito:hover {
-    background-color: #c39c1c;
-  }
+.card p {
+  color: #cda45e;
+  font-weight: bold;
+}
 
-  .card:hover {
+.card button {
+  background-color: #cda45e;
+  border: none;
+  color: #1c1c1c;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+
+.filtro {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: white;
+}
+
+.filtro select {
+  margin-left: 0.5rem;
+  padding: 0.3rem;
+  border-radius: 4px;
+}
+
+.imagenProducto {
+  width: 500%;
+  height: 280px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 20rem;
+}
+  
+.cardHeader {
+  display: flex;
+  justify-content: flex-end;
+}
+  
+.btnDetalleChico {
+  font-size: 0.7rem;
+  padding: 4px 8px;
+  background-color: #444;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+  
+.btnDetalleChico:hover {
+  background-color: #666;
+}
+  
+.btnCarrito {
+  margin-top: 10px;
+  padding: 10px 16px;
+  color: #000;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #0066ff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+}
+  
+
+.btnCarrito:hover, .btn {
+  background-color: #c39c1c;
+}
+
+.card:hover {
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   transform: scale(1.02);
   transition: all 0.2s ease;
 }
-
