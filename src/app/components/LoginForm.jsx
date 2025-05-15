@@ -33,9 +33,17 @@ export default function LoginForm() {
         {user && user.email ? (
           <>
             <h2>Hola {user.email}!</h2>
-            <h2 onClick={() => logout()}>Ya estas conectado, pero podes desconectarte haciendome click!</h2>
+            <button
+              onClick={() => {
+                logout();
+                router.push("/login"); // Redirect to login page after logout
+              }}
+              className={styles.logoutButton}
+            >
+              Cerrar Sesión
+            </button>
           </>
-          ):(
+        ) : (
           <>
             <h1 className={styles.loginHeader}>Bienvenido</h1>
             <form onSubmit={handleSubmit} className={styles.loginForm}>
