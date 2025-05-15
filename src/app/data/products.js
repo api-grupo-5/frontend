@@ -96,14 +96,6 @@ export const products = {
       "description": "Mouse inalámbrico confiable con gran duración de batería.",
       "id": 12,
       "seller": "usuario@ejemplo.com"
-    },
-    "43": {
-      "title": "12356654654566546",
-      "price": 21356546545645,
-      "description": "213",
-      "image": "123",
-      "seller": "asd@asd.com",
-      "id": 43
     }
   },
   "electrodomesticos": {
