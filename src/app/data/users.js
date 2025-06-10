@@ -60,5 +60,9 @@ export const users = {
   "dsada@gmail.com": {
     "password": "9cdcfbbe0183b2f1855ee2f7354fb2a8d175b133b227052a095302b4559bf525",
     "role": "user"
+  },
+  "matias1@gmail.com": {
+    "password": "1e5bdf9b1fb0369c90d3fcadcb9813d0e95752e97837c8266dd58a202d6c4fcf",
+    "role": "user"
   }
 };
