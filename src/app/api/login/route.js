@@ -1,45 +1,55 @@
 import jwt from 'jsonwebtoken';
 import { serialize } from 'cookie';
-import { users } from "../../data/users"
-import crypto from 'crypto';
+import bcrypt from 'bcrypt';
+import pool from '@/app/lib/db';
 
 const SECRET = 'clave_super_secreta';
 
-function hashPassword(password) {
-  return crypto.createHash('sha256').update(password).digest('hex');
-}
-
 export async function POST(req) {
-  const { email, password } = await req.json();
-  console.log(users)
+  try {
+    const { email, password } = await req.json();
+    const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
 
-  if (email in users && hashPassword(password) === users[email]["password"]) {
-    const token = jwt.sign(
-      {
-        email,
-        cart: users[email]["cart"],
-        role: users[email]["role"]
-      },
-      SECRET,
-      { expiresIn: '1h' }
-    );
+    if (rows.length > 0) {
+      const user = rows[0];
+      const isPasswordValid = await bcrypt.compare(password, user.password);
 
-    const serialized = serialize('token', token, {
-      httpOnly: true,
-      sameSite: 'strict',
-      maxAge: 3600,
-      path: '/',
+      if (isPasswordValid) {
+        const token = jwt.sign(
+          {
+            email: user.email,
+            cart: user.cart,
+            role: user.role,
+          },
+          SECRET,
+          { expiresIn: '1h' }
+        );
+
+        const serialized = serialize('token', token, {
+          httpOnly: true,
+          sameSite: 'strict',
+          maxAge: 3600,
+          path: '/',
+        });
+
+        return new Response(JSON.stringify({ ok: true, token, message: 'Login exitoso' }), {
+          status: 200,
+          headers: {
+            'Set-Cookie': serialized,
+          },
+        });
+      }
+    }
+
+    // ❌ Acá `serialized` no existe aún, por eso da error
+    return new Response(JSON.stringify({ ok: false, message: 'Credenciales inválidas' }), {
+      status: 401,
     });
 
-    return new Response(JSON.stringify({ ok:true, token: token, message: 'Login exitoso' }), {
-      status: 200,
-      headers: {
-        'Set-Cookie': serialized,
-      },
+  } catch (error) {
+    console.error('Error en login:', error);
+    return new Response(JSON.stringify({ ok: false, message: 'Error interno del servidor' }), {
+      status: 500,
     });
   }
-
-  return new Response(JSON.stringify({ ok: false, message: 'Credenciales inválidas' }), {
-    status: 401,
-  });
 }

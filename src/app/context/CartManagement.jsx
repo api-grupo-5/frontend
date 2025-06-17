@@ -1,6 +1,7 @@
 'use client'
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useNotifier } from '../context/NotifierManagent';
+import { authFetch } from "../context/LoginManagement";
 
 const CartContext = createContext(null);
 
@@ -80,7 +81,7 @@ export function CartProvider({ children }) {
       console.log(actualCart)
       console.log(typeof(actualCart))
       if (actualCart && actualCart.length){
-        const res = await fetch('/api/cart', {
+        const res = await authFetch('/api/cart', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: userEmail, cart: actualCart})
@@ -99,7 +100,7 @@ export function CartProvider({ children }) {
   const loadCart = async (userEmail) => {
     console.log(`${request_id} - [CartProvider] Cargando carrito del usuario...`);
     if (userEmail){
-      const res = await fetch('/api/cart', {
+      const res = await authFetch('/api/cart', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json', 'Email': userEmail }
       });
