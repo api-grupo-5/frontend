@@ -31,9 +31,12 @@ export function AuthProvider({ children }) {
   }, [user, loading]);
 
   const login = async (email, password) => {
-    const res = await fetch('/api/login', {
+    const res = await fetch('http://localhost:8080/api/auth/login', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'request_id': 'TestFromFrontEnd3'
+      },
       body: JSON.stringify({ email, password })
     });
 
