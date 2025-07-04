@@ -3,8 +3,8 @@
 import { useState } from "react";
 import styles from "../css/registerForm.module.css";
 import { useNotifier } from "../context/NotifierManagent";
-import {redirect} from "next/navigation"
 import { useAuth } from "../context/LoginManagement";
+import { useRouter } from "next/navigation";
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState({
@@ -17,7 +17,8 @@ export default function RegisterForm() {
   });
 
   const {notify} = useNotifier()
-  const { register } = useAuth();
+  const { register, login } = useAuth();
+  const router = useRouter();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -32,12 +33,13 @@ export default function RegisterForm() {
       return;
     }
 
-    const success = await register(formData.email, formData.password);
-    if (success) {
-      notify("Registro exitoso. Ahora puedes iniciar sesión.", "success");
-      router.push("/login");
-    } else{
-      notify("Hubo un problema con el registro. Inténtalo nuevamente.", "error");
+    const success_register = await register(formData.email, formData.password, formData.firstName, formData.lastName, formData.phone);
+    if (success_register) {
+      const success_login = await login(formData.email, formData.password)
+      
+      if (success_login) {
+        router.push("/home");
+      }
     }
   };
 

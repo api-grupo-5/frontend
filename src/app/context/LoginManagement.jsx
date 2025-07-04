@@ -28,33 +28,45 @@ export function AuthProvider({ children }) {
     }
   }, [user, loading]);
 
-  const login = async (email, password) => {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'request_id': request_id
-      },
-      body: JSON.stringify({ email, password })
-    });
-    
-    const response  = await res.json();
-    if (response.code == "0200"){
-      const data = response.data
-      setUser({ email: email, role: data.role, user_id: data.user_id, cart: null });
-      notify(`Bienvenido nuevamente, ${email}!`, "success");
-      console.log(`${request_id} - [AuthProvider] - Usuario '${email}' conectado correctamente`);
-    } else if(response.code == "0201" || response.code == "0412"){
-      const log = `backend - login: ${response.code}: ${response.message}`
-      notify("Credenciales invalidas o cuenta inexistente", "error");
-      console.log(`${request_id} - [AuthProvider] - Credenciales invalidas o cuenta inexistente: ${log}`);
+  const login = async (email, password, registered = false) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'request_id': request_id
+        },
+        body: JSON.stringify({ email, password })
+      });
+      
+      const response  = await res.json();
+      if (response.code == "0200"){
+        const data = response.data
+        setUser({ 
+          email, 
+          role: data.role, 
+          user_id: data.user_id, 
+          cart: null });
+        
+        if(registered){
+          notify(`Bienvenido nuevamente, ${email}!`, "success");
+        } else{
+          notify(`Bienvenido, ${email}!`, "success");
+        }
+        console.log(`${request_id} - [AuthProvider] - Usuario '${email}' conectado correctamente`);
+        return true
+      } else if(response.code == "0201" || response.code == "0412"){
+        const log = `backend - login: ${response.code}: ${response.message}`
+        notify("Credenciales invalidas o cuenta inexistente", "error");
+        console.log(`${request_id} - [AuthProvider] - Credenciales invalidas o cuenta inexistente: ${log}`);
+        return false
+      }
+    } catch (error) {
+      console.error(`${request_id} - [AuthProvider] - Error inesperado en login:`, error);
+      notify('Ocurrió un error desconocido, vuelva a intentar a la brevedad', 'error');
+      return false
     }
-  } catch (error) {
-    console.error(`${request_id} - [AuthProvider] - Error inesperado en login:`, error);
-    notify('Error de conexión al servidor', 'error');
-  }
-};
+  };
 
   const logout = async () => {
     const email = user.email
@@ -67,33 +79,40 @@ export function AuthProvider({ children }) {
     console.log(`${request_id} - [AuthProvider] - Usuario '${email}' desconectado correctamente`)
   };
   
-  const register = async (email, password) => {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'request_id': request_id
-      },
-      body: JSON.stringify({ email, password })
-    });
-    
-    const response  = await res.json();
-    const log = `backend - registro: ${response.code}: ${response.message}`
-    console.log(log)
-    console.log(response)
-    if (response.code == "0200"){
-      notify("Registro exitoso. Ahora puedes iniciar sesión.", "success");
-      console.log(`${request_id} - [AuthProvider] - Usuario '${email}' registrado correctamente`);
-    } else if(response.code == "0201" || response.code == "0412"){
-      notify("Credenciales invalidas o cuenta inexistente", "error");
-      console.log(`${request_id} - [AuthProvider] - Credenciales invalidas o cuenta inexistente: ${log}`);
+  const register = async (email, password, firstName, lastName, phone) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'request_id': request_id
+        },
+        body: JSON.stringify({ 
+          "username": email, 
+          password, 
+          "first_name": firstName, 
+          "last_name": lastName, 
+          phone })
+      });
+      
+      const response  = await res.json();
+      if (response.code == "0200"){
+        notify("Registro exitoso.", "success");
+        notify("Iniciandote sesion automaticamente...", "info");
+        console.log(`${request_id} - [AuthProvider] - Usuario '${email}' registrado correctamente`);
+        return true
+      } else if(response.code == "0410"){
+        const log = `backend - registro: ${response.code}: ${response.message}`
+        notify("El usuario ya está en uso", "error");
+        console.log(`${request_id} - [AuthProvider] - Credenciales invalidas o cuenta inexistente: ${log}`);
+        return false
+      }
+    } catch (error) {
+      console.error(`${request_id} - [AuthProvider] - Error inesperado en register:`, error);
+      notify('Ocurrió un error desconocido, vuelva a intentar a la brevedad', 'error');
+      return false
     }
-  } catch (error) {
-    console.error(`${request_id} - [AuthProvider] - Error inesperado en register:`, error);
-    notify('Error de conexión al servidor', 'error');
-  }
-};
+  };
 
   return (
     <AuthContext.Provider value={{ user, login, logout, register, loading }}>
