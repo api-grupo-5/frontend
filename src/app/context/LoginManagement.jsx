@@ -79,7 +79,7 @@ export function AuthProvider({ children }) {
     });
     
     const response  = await res.json();
-    const log = `backend - login: ${response.code}: ${response.message}`
+    const log = `backend - registro: ${response.code}: ${response.message}`
     console.log(log)
     console.log(response)
     if (response.code == "0200"){
