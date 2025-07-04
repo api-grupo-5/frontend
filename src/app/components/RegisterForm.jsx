@@ -4,6 +4,7 @@ import { useState } from "react";
 import styles from "../css/registerForm.module.css";
 import { useNotifier } from "../context/NotifierManagent";
 import {redirect} from "next/navigation"
+import { useAuth } from "../context/LoginManagement";
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState({
@@ -16,6 +17,7 @@ export default function RegisterForm() {
   });
 
   const {notify} = useNotifier()
+  const { register } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,16 +32,11 @@ export default function RegisterForm() {
       return;
     }
 
-    const res = await fetch("/api/register", {
-      method: "POST",
-      body: JSON.stringify({ email: formData.email, password: formData.password }),
-      headers: { "Content-Type": "application/json" },
-    });
-
-    if (res.ok) {
+    const success = await register(formData.email, formData.password);
+    if (success) {
       notify("Registro exitoso. Ahora puedes iniciar sesión.", "success");
-      redirect("/login")
-    } else {
+      router.push("/login");
+    } else{
       notify("Hubo un problema con el registro. Inténtalo nuevamente.", "error");
     }
   };
