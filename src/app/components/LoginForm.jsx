@@ -6,7 +6,7 @@ import styles from "../css/loginForm.module.css";
 import { useAuth } from "../context/LoginManagement";
 
 export default function LoginForm() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState(""); 
   const [password, setPassword] = useState("");
   const router = useRouter();
   const { login, user, logout } = useAuth();
@@ -14,7 +14,7 @@ export default function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const success = await login(email, password);
+    const success = await login(username, password);
     if (success) {
       router.push("/home");
     }
@@ -47,15 +47,15 @@ export default function LoginForm() {
           <>
             <h1 className={styles.loginHeader}>Bienvenido</h1>
             <form onSubmit={handleSubmit} className={styles.loginForm}>
-              <label htmlFor="email" className={styles.loginLabel}>
+              <label htmlFor="username" className={styles.loginLabel}>
                 Correo Electrónico o Usuario
               </label>
               <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Ingrese su correo o usuario"
+                id="username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Ingrese su usuario"
                 className={styles.loginInput}
                 required
               />

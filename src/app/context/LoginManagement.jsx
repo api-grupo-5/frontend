@@ -16,8 +16,15 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      const parsed = JSON.parse(storedUser).user;
-      setUser({ email: parsed.email, role: parsed.role, cart: parsed.cart });
+      try {
+        const parsed = JSON.parse(storedUser).user;
+        if (parsed?.email && parsed?.role) {
+          setUser({ email: parsed.email, role: parsed.role, cart: parsed.cart || [] });
+        }
+      } catch (err) {
+        console.error("Error al parsear user de localStorage", err);
+        localStorage.removeItem('user');
+      }
     }
     setLoading(false);
   }, []);
@@ -30,32 +37,51 @@ export function AuthProvider({ children }) {
     }
   }, [user, loading]);
 
-  const login = async (email, password) => {
+const login = async (email, password) => {
+  console.log('Enviando login con:', { email, password });
+  
+  try {
     const res = await fetch('http://localhost:8080/api/auth/login', {
       method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'request_id': 'TestFromFrontEnd3'
-      },
-      body: JSON.stringify({ email, password })
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        username: email,  // Usar "username" como espera el backend
+        password
+      }),
+      mode: 'cors',
+
     });
 
+    const responseData = await res.json();
+
     if (res.ok) {
-      const { token } = await res.json();
+      const token = responseData.token;
+      localStorage.setItem('token', token);
       const decoded = jwtDecode(token);
 
-      setUser({ email: decoded.email, role: decoded.role, cart: decoded.cart });
-      await loadCart(decoded.email)
-      notify(`Bienvenido nuevamente, ${decoded.email}!`, "success");
-      console.log(`${request_id} - [AuthProvider] - Usuario '${decoded.email}' conectado correctamente`)
+      // Ajustar según la estructura del token JWT de Spring
+      setUser({ 
+        email: decoded.sub || decoded.email,  // Spring usa 'sub' para el username
+        role: decoded.roles?.[0] || decoded.role || 'USER',
+        cart: decoded.cart || []
+      });
+      
+      await loadCart(decoded.sub || decoded.email);
+      notify(responseData.message || `Bienvenido nuevamente, ${decoded.sub || email}!`, "success");
+      return true;
     } else {
-      notify('Credenciales inválidas', "error");
-      console.log(`${request_id} - [AuthProvider] - Credenciales invalidas`)
+      notify(responseData.message || 'Credenciales inválidas', "error");
+      return false;
     }
-  };
+  } catch (error) {
+    console.error('Error en login:', error);
+    notify('Error de conexión con el servidor', "error");
+    return false;
+  }
+};
 
   const logout = async () => {
-    const email = user.email
+    const email = user?.email || null;
 
     await saveCart(email)
     notify(`Nos vemos pronto, ${email}!`, "success");
@@ -79,3 +105,20 @@ export function useAuth() {
   }
   return context;
 }
+
+export async function authFetch(url, options = {}) {
+  const token = localStorage.getItem("token");
+  const headers = options.headers ? {...options.headers} : {};
+
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url, {
+    ...options,
+    headers,
+  });
+
+  return response;
+}
+
