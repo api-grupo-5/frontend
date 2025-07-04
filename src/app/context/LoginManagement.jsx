@@ -49,6 +49,7 @@ const login = async (email, password) => {
         password
       }),
       mode: 'cors',
+
     });
 
     const responseData = await res.json();
