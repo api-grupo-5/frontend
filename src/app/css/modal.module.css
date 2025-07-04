@@ -1,0 +1,100 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(30, 30, 30, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: #2d2d30;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 500px;
+  animation: slideIn 0.3s ease-out;
+  border: 1px solid #cda45e;
+  color: #fffff0;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modalContent h2 {
+  margin: 0 0 1.5rem 0;
+  color: #cda45e;
+  font-size: 1.5rem;
+}
+
+.modalBody {
+  margin-bottom: 2rem;
+}
+
+.totalAmount {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #1e1e1e;
+  border-radius: 6px;
+  border: 1px solid #cda45e;
+}
+
+.amount {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #cda45e;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.confirmButton {
+  background-color: #cda45e;
+  color: #1e1e1e;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.confirmButton:hover {
+  background-color: #b8954e;
+  transform: scale(1.03);
+}
+
+.cancelButton {
+  background-color: #1e1e1e;
+  color: #fffff0;
+  border: 1px solid #cda45e;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.cancelButton:hover {
+  background-color: #2d2d30;
+  transform: scale(1.03);
+} 
