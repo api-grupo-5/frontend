@@ -6,7 +6,7 @@ import { useCart } from '../context/CartManagement';
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState({ email: null, user_id: null, role: null, cart: []});
+  const [user, setUser] = useState({ email: null, user_id: null, role: null, token: null, cart: []});
   const [loading, setLoading] = useState(true);
   const { notify, request_id } = useNotifier()
   const { saveCart, loadCart } = useCart()
@@ -14,8 +14,21 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      const parsed = JSON.parse(storedUser).user;
-      setUser({ email: parsed.email, role: parsed.role, cart: parsed.cart });
+      try {
+        const parsed = JSON.parse(storedUser).user;
+        if (parsed?.email && parsed?.role) {
+          setUser({ 
+            email: parsed.email, 
+            user_id: parsed.user_id || null,
+            role: parsed.role, 
+            token: parsed.token || null,
+            cart: parsed.cart || [] 
+          });
+        }
+      } catch (err) {
+        console.error("Error al parsear user de localStorage", err);
+        localStorage.removeItem('user');
+      }
     }
     setLoading(false);
   }, []);
@@ -45,7 +58,8 @@ export function AuthProvider({ children }) {
         setUser({ 
           email, 
           role: data.role, 
-          user_id: data.user_id, 
+          user_id: data.user,
+          token: data.token,
           cart: null });
         
         if(registered){
@@ -66,17 +80,16 @@ export function AuthProvider({ children }) {
       notify('Ocurrió un error desconocido, vuelva a intentar a la brevedad', 'error');
       return false
     }
-  };
-
+  } 
+  
   const logout = async () => {
-    const email = user.email
-
-    await saveCart(email)
-    notify(`Nos vemos pronto, ${email}!`, "success");
-    setUser({ email: null, role: null, cart: []});
-    localStorage.removeItem('user');
-    
-    console.log(`${request_id} - [AuthProvider] - Usuario '${email}' desconectado correctamente`)
+    if(user.email){
+      await saveCart(user.user_id, user.token)
+      notify(`Nos vemos pronto, ${user.email}!`, "success");
+      setUser({ email: null, user_id: null, role: null, token: null, cart: [] });
+      localStorage.removeItem('user');
+      console.log(`${request_id} - [AuthProvider] - Usuario '${user.email}' desconectado correctamente`)
+    }
   };
   
   const register = async (email, password, firstName, lastName, phone) => {

@@ -7,8 +7,7 @@ const CartContext = createContext(null);
 export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
-  const {notify} = useNotifier()
-  const request_id = Date.now()
+  const {notify, request_id} = useNotifier()
   
   useEffect(() => {
     const storedCart = localStorage.getItem('user')?.cart;
@@ -72,20 +71,34 @@ export function CartProvider({ children }) {
     notify("Producto eliminado", "success");
   };
 
-  const saveCart = async (userEmail) => {
+  const saveCart = async (user_id, token) => {
     console.log(`${request_id} - [CartProvider] Guardando carrito del usuario...`);
 
     if(localStorage.getItem('cart')){
       const actualCart = JSON.parse(localStorage.getItem('cart'));
-      console.log(actualCart)
-      console.log(typeof(actualCart))
       if (actualCart && actualCart.length){
-        const res = await fetch('/api/cart', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: userEmail, cart: actualCart})
+        let items = []
+
+        for(let item of actualCart){
+          items.push({
+            "id": item.id,
+            "quantity": item.quantity
+          })
+        }
+
+        console.table(items)
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/cart/`, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'request_id': request_id,
+            "Authorization": `Bearer ${token}`
+           },
+          body: JSON.stringify({ 
+            user_id, 
+            items})
         });
-    
+        console.log(res.json())
         if (res.ok) {
           console.log(`${request_id} - [CartProvider] Carrito del usuario guardado correctamente...`);
         } else {
