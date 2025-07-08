@@ -6,7 +6,7 @@ import { useCart } from '../context/CartManagement';
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState({ email: null, user_id: null, role: null, token: null, cart: []});
+  const [user, setUser] = useState({ email: null, user_id: null, role: null, token: null});
   const [loading, setLoading] = useState(true);
   const { notify, request_id } = useNotifier()
   const { saveCart, loadCart } = useCart()
@@ -59,8 +59,8 @@ export function AuthProvider({ children }) {
           email, 
           role: data.role, 
           user_id: data.user,
-          token: data.token,
-          cart: await loadCart(data.user, data.token) });
+          token: data.token
+        });
         
         if(registered){
           notify(`Bienvenido nuevamente, ${email}!`, "success");
