@@ -32,7 +32,7 @@ export default function Cart() {
       updateCartItemQuantity(id, newQuantity);
     }
   };
-
+  console.log("🛒 Carrito en render:", cart);
   return (
     <div>
     {cart && cart.length > 0 ?(

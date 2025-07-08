@@ -60,7 +60,7 @@ export function AuthProvider({ children }) {
           role: data.role, 
           user_id: data.user,
           token: data.token,
-          cart: null });
+          cart: await loadCart(data.user, data.token) });
         
         if(registered){
           notify(`Bienvenido nuevamente, ${email}!`, "success");
@@ -87,6 +87,7 @@ export function AuthProvider({ children }) {
       await saveCart(user.user_id, user.token)
       notify(`Nos vemos pronto, ${user.email}!`, "success");
       setUser({ email: null, user_id: null, role: null, token: null, cart: [] });
+      localStorage.removeItem('cart');
       localStorage.removeItem('user');
       console.log(`${request_id} - [AuthProvider] - Usuario '${user.email}' desconectado correctamente`)
     }
