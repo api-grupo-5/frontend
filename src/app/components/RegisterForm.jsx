@@ -3,7 +3,8 @@
 import { useState } from "react";
 import styles from "../css/registerForm.module.css";
 import { useNotifier } from "../context/NotifierManagent";
-import {redirect} from "next/navigation"
+import { useAuth } from "../context/LoginManagement";
+import { useRouter } from "next/navigation";
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState({
@@ -16,6 +17,8 @@ export default function RegisterForm() {
   });
 
   const {notify} = useNotifier()
+  const { register, login } = useAuth();
+  const router = useRouter();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,32 +33,13 @@ export default function RegisterForm() {
       return;
     }
 
-    // Generate username from email (before the @)
-    const username = formData.email.split("@")[0];
-
-    const body = {
-      username,
-      password: formData.password,
-      first_name: formData.first_name,
-      last_name: formData.last_name,
-      email: formData.email,
-      phone: formData.phone
-    };
-
-    const res = await fetch("http://localhost:8080/api/auth/register", {
-      method: "POST",
-      body: JSON.stringify(body),
-      headers: {
-        'Content-Type': 'application/json',
-        'request_id': 'TestFromFrontEnd3'
-      },
-    });
-
-    if (res.ok) {
-      notify("Registro exitoso. Ahora puedes iniciar sesión.", "success");
-      redirect("/login")
-    } else {
-      notify("Hubo un problema con el registro. Inténtalo nuevamente.", "error");
+    const success_register = await register(formData.email, formData.password, formData.first_name, formData.last_name, formData.phone);
+    if (success_register) {
+      const success_login = await login(formData.email, formData.password)
+      
+      if (success_login) {
+        router.push("/home");
+      }
     }
   };
 

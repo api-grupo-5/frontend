@@ -2,16 +2,14 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useNotifier } from "../context/NotifierManagent";
 import { useCart } from '../context/CartManagement';
-import {jwtDecode } from 'jwt-decode';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState({ email: null, role: null, cart: []});
+  const [user, setUser] = useState({ email: null, user_id: null, role: null, token: null});
   const [loading, setLoading] = useState(true);
-  const { notify } = useNotifier()
+  const { notify, request_id } = useNotifier()
   const { saveCart, loadCart } = useCart()
-  const request_id = Date.now()
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -19,7 +17,13 @@ export function AuthProvider({ children }) {
       try {
         const parsed = JSON.parse(storedUser).user;
         if (parsed?.email && parsed?.role) {
-          setUser({ email: parsed.email, role: parsed.role, cart: parsed.cart || [] });
+          setUser({ 
+            email: parsed.email, 
+            user_id: parsed.user_id || null,
+            role: parsed.role, 
+            token: parsed.token || null,
+            cart: parsed.cart || [] 
+          });
         }
       } catch (err) {
         console.error("Error al parsear user de localStorage", err);
@@ -37,62 +41,95 @@ export function AuthProvider({ children }) {
     }
   }, [user, loading]);
 
-const login = async (email, password) => {
-  console.log('Enviando login con:', { email, password });
-  
-  try {
-    const res = await fetch('http://localhost:8080/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        username: email,  // Usar "username" como espera el backend
-        password
-      }),
-      mode: 'cors',
-
-    });
-
-    const responseData = await res.json();
-
-    if (res.ok) {
-      const token = responseData.token;
-      localStorage.setItem('token', token);
-      const decoded = jwtDecode(token);
-
-      // Ajustar según la estructura del token JWT de Spring
-      setUser({ 
-        email: decoded.sub || decoded.email,  // Spring usa 'sub' para el username
-        role: decoded.roles?.[0] || decoded.role || 'USER',
-        cart: decoded.cart || []
+  const login = async (email, password, registered = false) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'request_id': request_id
+        },
+        body: JSON.stringify({ email, password })
       });
       
-      await loadCart(decoded.sub || decoded.email);
-      notify(responseData.message || `Bienvenido nuevamente, ${decoded.sub || email}!`, "success");
-      return true;
-    } else {
-      notify(responseData.message || 'Credenciales inválidas', "error");
-      return false;
+      const response  = await res.json();
+      if (response.code == "0200"){
+        const data = response.data
+        setUser({ 
+          email, 
+          role: data.role, 
+          user_id: data.user,
+          token: data.token
+        });
+        
+        if(registered){
+          notify(`Bienvenido nuevamente, ${email}!`, "success");
+        } else{
+          notify(`Bienvenido, ${email}!`, "success");
+        }
+        console.log(`${request_id} - [AuthProvider] - Usuario '${email}' conectado correctamente`);
+        return true
+      } else if(response.code == "0201" || response.code == "0412"){
+        const log = `backend - login: ${response.code}: ${response.message}`
+        notify("Credenciales invalidas o cuenta inexistente", "error");
+        console.log(`${request_id} - [AuthProvider] - Credenciales invalidas o cuenta inexistente: ${log}`);
+        return false
+      }
+    } catch (error) {
+      console.error(`${request_id} - [AuthProvider] - Error inesperado en login:`, error);
+      notify('Ocurrió un error desconocido, vuelva a intentar a la brevedad', 'error');
+      return false
     }
-  } catch (error) {
-    console.error('Error en login:', error);
-    notify('Error de conexión con el servidor', "error");
-    return false;
-  }
-};
-
+  } 
+  
   const logout = async () => {
-    const email = user?.email || null;
-
-    await saveCart(email)
-    notify(`Nos vemos pronto, ${email}!`, "success");
-    setUser({ email: null, role: null, cart: []});
-    localStorage.removeItem('user');
-    
-    console.log(`${request_id} - [AuthProvider] - Usuario '${email}' desconectado correctamente`)
+    if(user.email){
+      await saveCart(user.user_id, user.token)
+      notify(`Nos vemos pronto, ${user.email}!`, "success");
+      setUser({ email: null, user_id: null, role: null, token: null, cart: [] });
+      localStorage.removeItem('cart');
+      localStorage.removeItem('user');
+      console.log(`${request_id} - [AuthProvider] - Usuario '${user.email}' desconectado correctamente`)
+    }
   };
   
+  const register = async (email, password, firstName, lastName, phone) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'request_id': request_id
+        },
+        body: JSON.stringify({ 
+          "username": email, 
+          password, 
+          "first_name": firstName, 
+          "last_name": lastName, 
+          phone })
+      });
+      
+      const response  = await res.json();
+      if (response.code == "0200"){
+        notify("Registro exitoso.", "success");
+        notify("Iniciandote sesion automaticamente...", "info");
+        console.log(`${request_id} - [AuthProvider] - Usuario '${email}' registrado correctamente`);
+        return true
+      } else if(response.code == "0410"){
+        const log = `backend - registro: ${response.code}: ${response.message}`
+        notify("El usuario ya está en uso", "error");
+        console.log(`${request_id} - [AuthProvider] - Credenciales invalidas o cuenta inexistente: ${log}`);
+        return false
+      }
+    } catch (error) {
+      console.error(`${request_id} - [AuthProvider] - Error inesperado en register:`, error);
+      notify('Ocurrió un error desconocido, vuelva a intentar a la brevedad', 'error');
+      return false
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, register, loading }}>
       {children}
     </AuthContext.Provider>
   );
@@ -105,20 +142,3 @@ export function useAuth() {
   }
   return context;
 }
-
-export async function authFetch(url, options = {}) {
-  const token = localStorage.getItem("token");
-  const headers = options.headers ? {...options.headers} : {};
-
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-
-  const response = await fetch(url, {
-    ...options,
-    headers,
-  });
-
-  return response;
-}
-

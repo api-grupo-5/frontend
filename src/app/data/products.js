@@ -1,5 +1,5 @@
 export const products = {
-  "last_id": 44,
+  "last_id": 45,
   "perifericos": {
     "1": {
       "title": "Auriculares SteelSeries",
@@ -292,6 +292,14 @@ export const products = {
       "description": "Una de las mejores GPUs para gaming 2K y productividad.",
       "id": 36,
       "seller": "usuario@ejemplo.com"
+    },
+    "45": {
+      "title": "hola gero",
+      "price": "123",
+      "description": "1",
+      "image": "1",
+      "seller": "ccc@outlook.com",
+      "id": 45
     }
   }
 };

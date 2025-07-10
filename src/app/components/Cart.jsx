@@ -53,7 +53,7 @@ export default function Cart() {
       updateCartItemQuantity(id, newQuantity);
     }
   };
-
+  console.log("🛒 Carrito en render:", cart);
   return (
     <div>
       <ConfirmModal 
