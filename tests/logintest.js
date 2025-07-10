@@ -3,7 +3,7 @@ fetch('http://localhost:8080/api/auth/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'request_id': 'test-123'
+      'request_id': '1234567'
     },
     body: JSON.stringify({
       username: 'testuser',
