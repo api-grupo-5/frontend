@@ -8,11 +8,10 @@ const CartContext = createContext(null);
 export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
-  const {notify} = useNotifier()
-  const request_id = Date.now()
+  const {notify, request_id} = useNotifier()
   
   useEffect(() => {
-    const storedCart = localStorage.getItem('user')?.cart;
+    const storedCart = localStorage.getItem('cart');
     if (storedCart) {
       console.log("[CartProvider] Obteniendo carrito desde localStorage...");
       let json = JSON.parse(storedCart) 
@@ -73,45 +72,78 @@ export function CartProvider({ children }) {
     notify("Producto eliminado", "success");
   };
 
-  const saveCart = async (userEmail) => {
+  const saveCart = async (user_id, token) => {
     console.log(`${request_id} - [CartProvider] Guardando carrito del usuario...`);
 
     if(localStorage.getItem('cart')){
       const actualCart = JSON.parse(localStorage.getItem('cart'));
-      console.log(actualCart)
-      console.log(typeof(actualCart))
       if (actualCart && actualCart.length){
-        const res = await authFetch('/api/cart', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: userEmail, cart: actualCart})
+        let items = []
+
+        for(let item of actualCart){
+          items.push({
+            "id": item.id,
+            "quantity": item.quantity
+          })
+        }
+
+        console.table(items)
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/cart/saveCart`, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'request_id': request_id,
+            "Authorization": `Bearer ${token}`
+           },
+          body: JSON.stringify({ 
+            user_id, 
+            items
+          })
         });
-    
-        if (res.ok) {
+
+        const response  = await res.json();
+        console.log(response)
+        if (response.code == "0200") {
           console.log(`${request_id} - [CartProvider] Carrito del usuario guardado correctamente...`);
         } else {
           console.log(`${request_id} - [CartProvider] No se pudo guardar el carrito del usuario`)
         }
+
+        localStorage.removeItem('cart');
       }
-      localStorage.removeItem('cart');
+    } else{
+      localStorage.setItem('cart', []);
     }
   }
 
-  const loadCart = async (userEmail) => {
+  const loadCart = async (user_id, token) => {
     console.log(`${request_id} - [CartProvider] Cargando carrito del usuario...`);
-    if (userEmail){
-      const res = await authFetch('/api/cart', {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json', 'Email': userEmail }
+    if (user_id){
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/cart/loadCart`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'request_id': request_id,
+          "Authorization": `Bearer ${token}` 
+        },
+        body: JSON.stringify({ 
+          user_id
+        })
       });
       
-      console.log("Respuesta de la API: ", res);
-      if (res.ok) {
-        console.log(`${request_id} - [CartProvider] Carrito del usuario guardado correctamente...`);
-        localStorage.setItem('cart', res.cart_data);
+      const response  = await res.json();
+      console.log(response)
+      if (response.code == "0200") {
+        console.log(`${request_id} - [CartProvider] Carrito del usuario cargado correctamente...`);
+        const cart_items = response.data.cart_items
+        console.log(cart_items)
+        localStorage.setItem('cart', JSON.stringify(cart_items));
+        setCart(cart_items);
       } else {
-        console.log(`${request_id} - [CartProvider] No se pudo guardar el carrito del usuario`)
+        console.log(`${request_id} - [CartProvider] No se pudo cargar el carrito del usuario`)
       }
+    } else{
+      console.log(`${request_id} - [CartProvider] Falta el user_id`);
     }
   }
 

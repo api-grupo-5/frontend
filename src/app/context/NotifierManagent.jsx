@@ -22,7 +22,7 @@ export function NotifierProvider({ children }) {
   };
 
   return (
-    <NotificationContext.Provider value={{ notify }}>
+    <NotificationContext.Provider value={{ notify, request_id }}>
       {children}
       {notifications.length > 0 && (
         <div className={styles.notificationContainer}>
