@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "../css/loginForm.module.css";
 import { useAuth } from "../context/LoginManagement";
+import UserPanel from "./UserPanel";
 
 export default function LoginForm() {
   const [username, setUsername] = useState(""); 
@@ -16,74 +17,60 @@ export default function LoginForm() {
 
     const success = await login(username, password);
     if (success) {
-      router.push("/home");
+
     }
   };
 
-  return (
-    <div className={styles.loginContainer}>
-      <div className={styles.logoContainer}>
-        <img
-          src="/images/OnlyLogo.png"
-          alt="Accelerate Logo"
-          className={styles.logo}
-        />
-      </div>
-      <div className={styles.loginBox}>
-        {user && user.email ? (
-          <>
-            <h2>Hola {user.email}!</h2>
-            <button
-              onClick={() => {
-                logout();
-                router.push("/login"); // Redirect to login page after logout
-              }}
-              className={styles.logoutButton}
-            >
-              Cerrar Sesión
-            </button>
-          </>
-        ) : (
-          <>
-            <h1 className={styles.loginHeader}>Bienvenido</h1>
-            <form onSubmit={handleSubmit} className={styles.loginForm}>
-              <label htmlFor="username" className={styles.loginLabel}>
-                Correo Electrónico o Usuario
-              </label>
-              <input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Ingrese su usuario"
-                className={styles.loginInput}
-                required
-              />
-              <label htmlFor="password" className={styles.loginLabel}>
-                Contraseña
-              </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Ingrese su contraseña"
-                className={styles.loginInput}
-                required
-              />
-              <button type="submit" className={styles.loginButton}>
-                Continuar
-              </button>
-            </form>
-            <p className={styles.loginFooter}>
-              ¿Olvidaste tu contraseña? <a href="/recover">Recupérala aquí</a>
-            </p>
-            <p className={styles.loginFooter}>
-              ¿No tienes una cuenta? <a href="/register">Crea una aquí</a>
-            </p>
-          </>
-        )}
-      </div>
+
+return user && user.email ? (
+  <UserPanel />
+) : (
+  <div className={styles.loginContainer}>
+    <div className={styles.logoContainer}>
+      <img
+        src="/images/OnlyLogo.png"
+        alt="Accelerate Logo"
+        className={styles.logo}
+      />
     </div>
-  );
+    <div className={styles.loginBox}>
+      <h1 className={styles.loginHeader}>Bienvenido</h1>
+      <form onSubmit={handleSubmit} className={styles.loginForm}>
+        <label htmlFor="username" className={styles.loginLabel}>
+          Correo Electrónico o Usuario
+        </label>
+        <input
+          id="username"
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Ingrese su usuario"
+          className={styles.loginInput}
+          required
+        />
+        <label htmlFor="password" className={styles.loginLabel}>
+          Contraseña
+        </label>
+        <input
+          id="password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Ingrese su contraseña"
+          className={styles.loginInput}
+          required
+        />
+        <button type="submit" className={styles.loginButton}>
+          Continuar
+        </button>
+      </form>
+      <p className={styles.loginFooter}>
+        ¿Olvidaste tu contraseña? <a href="/recover">Recupérala aquí</a>
+      </p>
+      <p className={styles.loginFooter}>
+        ¿No tienes una cuenta? <a href="/register">Crea una aquí</a>
+      </p>
+    </div>
+  </div>
+);
 }

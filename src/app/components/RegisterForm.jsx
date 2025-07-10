@@ -33,7 +33,7 @@ export default function RegisterForm() {
       return;
     }
 
-    const success_register = await register(formData.email, formData.password, formData.first_name, formData.last_name, formData.phone);
+    const success_register = await register(formData.email, formData.password, formData.firstName, formData.lastName, formData.phone);
     if (success_register) {
       const success_login = await login(formData.email, formData.password)
       

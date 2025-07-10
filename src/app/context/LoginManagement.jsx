@@ -142,3 +142,54 @@ export function useAuth() {
   }
   return context;
 }
+
+export async function authFetch(url, options = {}) {
+  const token = localStorage.getItem("token");
+  const headers = options.headers ? {...options.headers} : {};
+
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url, {
+    ...options,
+    headers,
+  });
+
+  return response;
+}
+
+export async function getUserProfile() {
+  const token = localStorage.getItem("token");
+  const res = await fetch("http://localhost:8080/api/users/me", {
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json",
+      "request_id": "1234567"
+    }
+  });
+
+  if (!res.ok) throw new Error("No se pudo obtener el perfil del usuario");
+  return await res.json();
+}
+
+export async function updateUserProfile(profileData) {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch("http://localhost:8080/api/users/me", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`,
+      "request_id": "1234567"
+    },
+    body: JSON.stringify(profileData)
+  });
+
+  if (!res.ok) {
+    throw new Error("No se pudo actualizar el perfil");
+  }
+
+  return await res.json();
+}
