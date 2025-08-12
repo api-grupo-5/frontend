@@ -53,54 +53,50 @@ export default function Cart() {
       updateCartItemQuantity(id, newQuantity);
     }
   };
-  console.log("🛒 Carrito en render:", cart);
   return (
     <div>
-      <ConfirmModal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onConfirm={handleModalConfirm}
-        total={total}
-      />
-      {cart && cart.length > 0 ?(
-        <div>
-          <h1>Bienvenido{user && user.email ? `, ${user.email}`:""}!</h1>
-          <p>Tenes {totalItems} productos en tu carrito</p>
-          <div className={styles.cartLayout}>
-            <div className={styles.cartItems}>
-              <ul>
-                {cart.map((item, idx) => {
-                  return (
-                    <CartItem 
-                      key={idx}
-                      id={item.id}
-                      title={item.title}
-                      image={item.image}
-                      price={item.price * item.quantity}
-                      quantity={item.quantity}
-                      onRemove={removeFromCart}
-                      onQuantityChange={handleQuantityChange}
-                    />
-                  )
-                })}
-              </ul>
-              </div>
-            <div className={styles.cartSummary}>
-              <p>Agregaste {totalItems} productos</p>
-              <p className={styles.totalPrice}>Total: ${total.toFixed(2)}</p>
-              <button className={styles.confirmButton} onClick={handleConfirm}>
-                Confirmar compra
-              </button>
+    {cart && cart.length > 0 ?(
+      <div>
+        <h1>Bienvenido{user && user.email ? `, ${user.email}`:""}!</h1>
+        <p>Tenes {cart.reduce((acc, item) => acc + item.quantity, 0)} productos en tu carrito</p>
+        <div className={styles.cartLayout}>
+          <div className={styles.cartItems}>
+            <ul>
+              {cart.map((item, idx) => {
+                total += item.price * item.quantity
+                totalItems += item.quantity
+                
+                return (
+                  <CartItem 
+                    key={idx}
+                    id={item.id}
+                    title={item.name}
+                    image={item.image}
+                    price={item.price * item.quantity}
+                    quantity={item.quantity}
+                    onRemove={removeFromCart}
+                    onQuantityChange={handleQuantityChange}
+                  />
+                )
+              })}
+            </ul>
             </div>
+          <div className={styles.cartSummary}>
+            <p>Agregaste {totalItems} productos</p>
+            <p className={styles.totalPrice}>Total: ${total.toFixed(2)}</p>
+            <button className={styles.confirmButton} onClick={handleConfirm}>
+              Confirmar compra
+            </button>
           </div>
         </div>
-      ): (
-        <div>
-          <h1>
-            No agregaste ningún producto al carrito
-          </h1>
-        </div>
-      )}
-    </div>
+      </div>
+    ): (
+      <div>
+        <h1>
+          No agregaste ningún producto al carrito
+        </h1>
+      </div>
+    )}
+  </div>
   );
 }

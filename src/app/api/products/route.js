@@ -1,66 +1,19 @@
-import fs from 'fs';
-import path from 'path';
-
-const productsFilePath = path.join(process.cwd(), 'src/app/data', 'products.js');
-
-function updateFile(content){
-    const fileContent = `export const products = ${JSON.stringify(content, null, 2)};\n`;
-    fs.writeFileSync(productsFilePath, fileContent, 'utf-8');
-}
-
-export async function PUT(req) {
-    const { id, nombre, precio, descripcion, imagen, categoria, vendedor } = await req.json();
-
-    let { products } = await import("../../data/products")
-
+export async function GET(request_id) {
     try{
-        console.log("todos los productos:")
-        console.log(products)
-        
-        products[categoria][id] = {
-            "title": nombre,
-            "price": precio,
-            "description": descripcion,
-            "image": imagen,
-            "seller": vendedor,
-            "id": id
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products`, {
+        method: 'GET',
+        headers: { 
+            'Content-Type': 'application/json',
+            'request_id': request_id
+            }
+        }); 
+        const response  = await res.json();
+        if (response.code == "0200") {
+            return new Response(JSON.stringify({ ok: true, message: `${request_id} - [ProductsRoute] Productos obtenidos correctamente`, data: response.data }), {status: 200});
+        } else {
+            return new Response(JSON.stringify({ ok: true, message: `${request_id} - [ProductsRoute] No se pudo obtener los productos` }), {status: 500});
         }
-        
-        updateFile(products)
-
-        console.log(`producto id ${id} modificado:`)
-        console.log(products[categoria][id])
-        return new Response(JSON.stringify({ ok:true, message: 'Producto modificado correctamente' }), {
-            status: 200
-        });
     } catch(e){
-        console.log(`Error al querer vender: ${e}`)
-        return new Response(JSON.stringify({ ok: false, message: 'El producto no se pudo modificar' }), {
-            status: 400
-        });
-    }
-}
-
-export async function DELETE(req) {
-    const { id, categoria } = await req.json();
-
-    let { products } = await import("../../data/products")
-    console.log(id, categoria)
-
-    try{
-        const deletedProduct = products[categoria][id]
-        delete products[categoria][id]
-        updateFile(products)
-
-        console.log(`producto id ${id} eliminado:`)
-        console.log(deletedProduct)
-        return new Response(JSON.stringify({ ok:true, message: 'Producto eliminado correctamente' }), {
-            status: 200
-        });
-    } catch(e){
-        console.log(`Error al querer vender: ${e}`)
-        return new Response(JSON.stringify({ ok: false, message: 'El producto no se pudo eliminar' }), {
-            status: 400
-        });
+        return new Response(JSON.stringify({ ok: false, message: `${request_id} - [ProductsRoute] Error desconocido al querer obtener los productos: ${e}` }), {status: 500});
     }
 }

@@ -2,12 +2,13 @@
 import React, { createContext, useContext, useState } from 'react';
 import Notification from '../components/Notification';
 import styles from '../css/notification.module.css';
+import { format } from 'date-fns';
 
 const NotificationContext = createContext(null);
 
 export function NotifierProvider({ children }) {
   const [notifications, setNotifications] = useState([]);
-  const request_id = Date.now();
+  const request_id = format(new Date(), 'ddMMyyyyHHmmssSSS');
   
   const notify = (message, type = 'success') => {
     setNotifications((prev) => {

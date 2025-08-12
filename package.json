@@ -12,6 +12,7 @@
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",
     "cookie": "^1.0.2",
+    "date-fns": "^4.1.0",
     "frontend": "file:",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",

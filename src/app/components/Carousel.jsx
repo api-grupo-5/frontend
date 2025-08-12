@@ -2,18 +2,19 @@
 
 import styles from "../css/carousel.module.css";
 import Product from "./Product";
-import { useEffect, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useCart } from '../context/CartManagement';
-import { products } from "../data/products";
+import { GET } from '../api/products/route'
+import { useNotifier } from '../context/NotifierManagent';
 
 export default function Carousel() {
     const { addToCart } = useCart();
+    const { request_id } = useNotifier()
+    const [loopedProducts, setLoopedProducts] = useState([]);
     const scrollRef = useRef(null);
     const timeoutRef = useRef(null);
     const CARD_WIDTH = parseInt(process.env.NEXT_PUBLIC_CARD_WIDTH);
-    const allProducts = [...Object.values(products["computacion"]), ...Object.values(products["electrodomesticos"]), ...Object.values(products["perifericos"])];
-    const loopedProducts = [...allProducts, ...allProducts]
 
     const pauseAutoScroll = () => clearTimeout(timeoutRef.current);
 
@@ -23,6 +24,15 @@ export default function Carousel() {
             startAutoScroll();
         }, 3000);
     };
+    useEffect(() => {
+        async function fetchProducts() {
+            const response = await GET(request_id);
+            const data = await response.json();
+            const products = data.data;
+            setLoopedProducts([...products, ...products]);
+        }
+        fetchProducts();
+    }, []);
 
     useEffect(() => {
         if (loopedProducts.length === 0) return;
@@ -82,7 +92,7 @@ export default function Carousel() {
                 {loopedProducts.map((product, index) => (
                     <Product
                         key={`${product.id}-${index}`}
-                        title={product.title}
+                        title={product.name}
                         image={product.image}
                         price={product.price}
                         seller={product.seller}

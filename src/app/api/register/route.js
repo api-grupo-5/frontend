@@ -1,44 +1,28 @@
-import fs from 'fs';
-import path from 'path';
-import crypto from 'crypto';
-
-const usersFilePath = path.join(process.cwd(), 'src/app/data', 'users.js');
-
-function updateFile(content) {
-  const fileContent = `export const users = ${JSON.stringify(content, null, 2)};\n`;
-  fs.writeFileSync(usersFilePath, fileContent, 'utf-8');
-}
-
-function hashPassword(password) {
-  return crypto.createHash('sha256').update(password).digest('hex');
-}
-
-export async function POST(req) {
-  const { email, password } = await req.json();
-  const { users } = await import("../../data/users");
-
-  if (!(email in users)) {
-    try {
-      const hashedPassword = hashPassword(password);
-      users[email] = {
-        "password": hashedPassword,
-        "role": "user"
-      };
-
-      updateFile(users);
-
-      return new Response(JSON.stringify({ ok: true, message: 'Registro exitoso' }), {
-        status: 200
-      });
-    } catch (e) {
-      console.log(`Error al registrar: ${e}`);
-      return new Response(JSON.stringify({ ok: false, message: 'Registro fallido' }), {
-        status: 400
-      });
-    }
-  } else {
-    return new Response(JSON.stringify({ ok: false, message: 'El usuario ya existe' }), {
-      status: 409
+export async function POST(request_id, email, password, firstName, lastName, phone) {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'request_id': request_id
+      },
+      body: JSON.stringify({ 
+        email,
+        password,
+        "first_name": firstName,
+        "last_name": lastName,
+        phone,
+        "address": "test_123",
+        "personal_id": 123455678 })
     });
+
+    const response  = await res.json();
+    if (response.code == "0200") {
+      return new Response(JSON.stringify({ ok: true, message: `${request_id} - [RegisterRoute] Usuario registrado correctamente` }), {status: 200});
+    } else {
+      return new Response(JSON.stringify({ ok: false, message: `${request_id} - [RegisterRoute] El usuario no pudo registarse` }), {status: 400});
+    }
+  } catch (e) {
+    return new Response(JSON.stringify({ ok: false, message: `${request_id} - [RegisterRoute] El usuario no pudo registarse por un error desconocido: ${e}` }), {status: 500});
   }
 }
