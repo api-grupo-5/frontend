@@ -2,11 +2,13 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useNotifier } from "../context/NotifierManagent";
 import { useCart } from '../context/CartManagement';
+import { POST as LOGIN_POST } from '../api/login/route'
+import { POST as REGISTER_POST} from '../api/register/route'
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState({ email: null, user_id: null, role: null, token: null});
+  const [user, setUser] = useState({ email: null, user_id: null, role_id: null, token: null, cart_id: null});
   const [loading, setLoading] = useState(true);
   const { notify, request_id } = useNotifier()
   const { saveCart, loadCart } = useCart()
@@ -16,13 +18,13 @@ export function AuthProvider({ children }) {
     if (storedUser) {
       try {
         const parsed = JSON.parse(storedUser).user;
-        if (parsed?.email && parsed?.role) {
+        if (parsed?.email && parsed?.role_id) {
           setUser({ 
             email: parsed.email, 
             user_id: parsed.user_id || null,
-            role: parsed.role, 
+            role_id: parsed.role_id || null, 
             token: parsed.token || null,
-            cart: parsed.cart || [] 
+            cart_id: parsed.token || null
           });
         }
       } catch (err) {
@@ -43,37 +45,28 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password, registered = false) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'request_id': request_id
-        },
-        body: JSON.stringify({ email, password })
-      });
-      
-      const response  = await res.json();
-      if (response.code == "0200"){
+      const res = await LOGIN_POST(request_id, email, password)
+      if (res.ok){
+        const response  = await res.json();
         const data = response.data
         setUser({ 
           email, 
-          role: data.role, 
-          user_id: data.user,
-          token: data.token
+          role_id: data.role_id, 
+          user_id: data.user_id,
+          token: data.token,
+          cart_id: data.cart_id
         });
-        
+
         if(registered){
-          notify(`Bienvenido nuevamente, ${email}!`, "success");
-        } else{
           notify(`Bienvenido, ${email}!`, "success");
+        } else{
+          notify(`Bienvenido nuevamente, ${email}!`, "success");
+          loadCart(request_id, data.user_id, data.token, data.cart_id)
         }
         console.log(`${request_id} - [AuthProvider] - Usuario '${email}' conectado correctamente`);
         return true
-      } else if(response.code == "0201" || response.code == "0412"){
-        const log = `backend - login: ${response.code}: ${response.message}`
-        notify("Credenciales invalidas o cuenta inexistente", "error");
-        console.log(`${request_id} - [AuthProvider] - Credenciales invalidas o cuenta inexistente: ${log}`);
-        return false
+      } else{
+        notify(`Error: los datos son incorrectos o inexistentes`, "error");
       }
     } catch (error) {
       console.error(`${request_id} - [AuthProvider] - Error inesperado en login:`, error);
@@ -84,10 +77,10 @@ export function AuthProvider({ children }) {
   
   const logout = async () => {
     if(user.email){
-      await saveCart(user.user_id, user.token)
+      await saveCart(user.user_id, user.token, user.cart_id)
       notify(`Nos vemos pronto, ${user.email}!`, "success");
-      setUser({ email: null, user_id: null, role: null, token: null, cart: [] });
-      localStorage.removeItem('cart');
+      setUser({ email: null, user_id: null, role_id: null, token: null, cart_id: null });
+      localStorage.removeItem('cart_items');
       localStorage.removeItem('user');
       console.log(`${request_id} - [AuthProvider] - Usuario '${user.email}' desconectado correctamente`)
     }
@@ -95,32 +88,14 @@ export function AuthProvider({ children }) {
   
   const register = async (email, password, firstName, lastName, phone) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'request_id': request_id
-        },
-        body: JSON.stringify({ 
-          "username": email, 
-          password, 
-          "first_name": firstName, 
-          "last_name": lastName, 
-          phone })
-      });
-      
-      const response  = await res.json();
-      if (response.code == "0200"){
+      const response = await REGISTER_POST(request_id, email, password, firstName, lastName, phone)
+      if (response.ok){
         notify("Registro exitoso.", "success");
         notify("Iniciandote sesion automaticamente...", "info");
         console.log(`${request_id} - [AuthProvider] - Usuario '${email}' registrado correctamente`);
         return true
-      } else if(response.code == "0410"){
-        const log = `backend - registro: ${response.code}: ${response.message}`
-        notify("El usuario ya está en uso", "error");
-        console.log(`${request_id} - [AuthProvider] - Credenciales invalidas o cuenta inexistente: ${log}`);
-        return false
-      }
+      }   
+        notify("Error: El email esta en uso, ingresa otro", "error");
     } catch (error) {
       console.error(`${request_id} - [AuthProvider] - Error inesperado en register:`, error);
       notify('Ocurrió un error desconocido, vuelva a intentar a la brevedad', 'error');

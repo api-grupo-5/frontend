@@ -1,6 +1,7 @@
 'use client'
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useNotifier } from '../context/NotifierManagent';
+import { GET, PUT } from "../api/cart/route";
 
 const CartContext = createContext(null);
 
@@ -11,7 +12,7 @@ export function CartProvider({ children }) {
   
   useEffect(() => {
     const storedCart = localStorage.getItem('cart');
-    if (storedCart) {
+    if (storedCart || storedCart == "undefined") {
       console.log("[CartProvider] Obteniendo carrito desde localStorage...");
       let json = JSON.parse(storedCart) 
       setCart(json);
@@ -32,18 +33,19 @@ export function CartProvider({ children }) {
   }, [cart, loading]);
 
   const addToCart = (producto) => {
-    console.log(`${request_id} - [CartProvider] Agregando producto '[ID: ${producto.id}] ${producto.title}' al carrito...`);
+    console.log(`${request_id} - [CartProvider] Agregando producto '[ID: ${producto.id}] ${producto.name}' al carrito...`);
     setCart((prev) => {
       const existingProduct = prev.find((p) => p.id === producto.id);
       if (existingProduct) {
+        console.log(`${request_id} - [CartProvider] Nueva cantidad del articulo en el carrito: ${existingProduct.quantity + 1}`);
         return prev.map((p) =>
           p.id === producto.id ? { ...p, quantity: p.quantity + 1 } : p
         );
       } else {
+        console.log(`${request_id} - [CartProvider] Producto agregado al carrito`);
         return [...prev, { ...producto, quantity: 1 }];
       }
     });
-    console.log(`${request_id} - [CartProvider] Producto agregado al carrito`);
     notify("Producto agregado al carrito", "success");
   };
 
@@ -71,79 +73,22 @@ export function CartProvider({ children }) {
     notify("Producto eliminado", "success");
   };
 
-  const saveCart = async (user_id, token) => {
+  const saveCart = async (user_id, token, cart_id) => {
     console.log(`${request_id} - [CartProvider] Guardando carrito del usuario...`);
-
-    if(localStorage.getItem('cart')){
-      const actualCart = JSON.parse(localStorage.getItem('cart'));
-      if (actualCart && actualCart.length){
-        let items = []
-
-        for(let item of actualCart){
-          items.push({
-            "id": item.id,
-            "quantity": item.quantity
-          })
-        }
-
-        console.table(items)
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/cart/saveCart`, {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'request_id': request_id,
-            "Authorization": `Bearer ${token}`
-           },
-          body: JSON.stringify({ 
-            user_id, 
-            items
-          })
-        });
-
-        const response  = await res.json();
-        console.log(response)
-        if (response.code == "0200") {
-          console.log(`${request_id} - [CartProvider] Carrito del usuario guardado correctamente...`);
-        } else {
-          console.log(`${request_id} - [CartProvider] No se pudo guardar el carrito del usuario`)
-        }
-
-        localStorage.removeItem('cart');
-      }
-    } else{
-      localStorage.setItem('cart', []);
-    }
+    await PUT(request_id, user_id, token, cart_id);
+    console.log(`${request_id} - [CartProvider] Carrito del usuario guardado correctamente`);
   }
 
-  const loadCart = async (user_id, token) => {
+  const loadCart = async (request_id, user_id, token, cart_id) => {
     console.log(`${request_id} - [CartProvider] Cargando carrito del usuario...`);
-    if (user_id){
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/cart/loadCart`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'request_id': request_id,
-          "Authorization": `Bearer ${token}` 
-        },
-        body: JSON.stringify({ 
-          user_id
-        })
-      });
-      
-      const response  = await res.json();
-      console.log(response)
-      if (response.code == "0200") {
-        console.log(`${request_id} - [CartProvider] Carrito del usuario cargado correctamente...`);
-        const cart_items = response.data.cart_items
-        console.log(cart_items)
-        localStorage.setItem('cart', JSON.stringify(cart_items));
-        setCart(cart_items);
-      } else {
-        console.log(`${request_id} - [CartProvider] No se pudo cargar el carrito del usuario`)
-      }
-    } else{
-      console.log(`${request_id} - [CartProvider] Falta el user_id`);
-    }
+    const response = await GET(request_id, user_id, token, cart_id);
+    const response_json = await response.json();
+    const data = response_json.data;
+    const cart_items = data.cart_items
+    
+    setCart(cart_items)
+    localStorage.setItem('cart', cart_items);
+    console.log(`${request_id} - [CartProvider] Carrito del usuario cargado correctamente`);
   }
 
   return (

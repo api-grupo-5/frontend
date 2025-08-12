@@ -32,7 +32,6 @@ export default function Cart() {
       updateCartItemQuantity(id, newQuantity);
     }
   };
-  console.log("🛒 Carrito en render:", cart);
   return (
     <div>
     {cart && cart.length > 0 ?(
@@ -50,7 +49,7 @@ export default function Cart() {
                   <CartItem 
                     key={idx}
                     id={item.id}
-                    title={item.title}
+                    title={item.name}
                     image={item.image}
                     price={item.price * item.quantity}
                     quantity={item.quantity}
