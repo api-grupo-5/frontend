@@ -1,77 +1,58 @@
 'use client';
 
-import { useEffect, useRef, useState } from "react";
-import Product from "./Product";
 import styles from "../css/carousel.module.css";
+import Product from "./Product";
+import { useEffect, useState, useRef } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useCart } from '../context/CartManagement';
+import { GET } from '../api/products/route'
+import { useNotifier } from '../context/NotifierManagent';
 
 export default function Carousel() {
-    const [products, setProducts] = useState([]);
+    const { addToCart } = useCart();
+    const { request_id } = useNotifier()
+    const [loopedProducts, setLoopedProducts] = useState([]);
     const scrollRef = useRef(null);
     const timeoutRef = useRef(null);
-    const CARD_WIDTH = 220;
-    const apiUrl = process.env.NEXT_PUBLIC_FAKE_STORE_API;
-
-    useEffect(() => {
-        fetch(apiUrl)
-            .then(res => res.json())
-            .then(data => setProducts(data))
-            .catch(error => console.error("Error al cargar productos:", error));
-    }, []);
-
-    const loopedProducts = [...products, ...products];
+    const CARD_WIDTH = parseInt(process.env.NEXT_PUBLIC_CARD_WIDTH);
 
     const pauseAutoScroll = () => clearTimeout(timeoutRef.current);
 
-    const resumeAutoScroll = () => {
-        clearTimeout(timeoutRef.current);
-        startAutoScroll();
-    };
-
     const startAutoScroll = () => {
         timeoutRef.current = setTimeout(() => {
-            const el = scrollRef.current;
-            if (!el) return;
-
-            el.scrollBy({ left: CARD_WIDTH, behavior: 'smooth' });
-
-            if (el.scrollLeft >= (products.length * CARD_WIDTH)) {
-                setTimeout(() => {
-                    el.scrollTo({ left: 0, behavior: 'auto' });
-                }, 300);
-            }
-
+            scrollRight()
             startAutoScroll();
         }, 3000);
     };
+    useEffect(() => {
+        async function fetchProducts() {
+            const response = await GET(request_id);
+            const data = await response.json();
+            const products = data.data;
+            setLoopedProducts([...products, ...products]);
+        }
+        fetchProducts();
+    }, []);
 
     useEffect(() => {
-        if (products.length === 0) return;
-
-        startAutoScroll();
+        if (loopedProducts.length === 0) return;
 
         const el = scrollRef.current;
-
-        const handleScroll = () => {
-            clearTimeout(timeoutRef.current);
-
-            if (el && el.scrollLeft >= (products.length * CARD_WIDTH)) {
-                el.scrollTo({ left: 0, behavior: 'auto' });
-            }
-
-            startAutoScroll();
-        };
-
-        el?.addEventListener("scroll", handleScroll);
-
+        if (el) {
+            el.scrollLeft = el.scrollWidth / 2;
+        }
+        
+        startAutoScroll();
         return () => {
-            clearTimeout(timeoutRef.current);
-            el?.removeEventListener("scroll", handleScroll);
+            pauseAutoScroll();
         };
-    }, [products]);
+    }, [loopedProducts]);
 
     const scrollLeft = () => {
-        scrollRef.current?.scrollBy({ left: -CARD_WIDTH, behavior: "smooth" });
+        const el = scrollRef.current;
+        if (!el) return;
+        
+        el.current?.scrollBy({ left: -CARD_WIDTH, behavior: "smooth" });
     };
 
     const scrollRight = () => {
@@ -80,39 +61,45 @@ export default function Carousel() {
 
         el.scrollBy({ left: CARD_WIDTH, behavior: "smooth" });
 
-        if (el.scrollLeft >= (products.length * CARD_WIDTH)) {
+        const mid = (el.scrollWidth / 2)
+        if (el.scrollLeft >= mid) { // Si paso la mitad de los productos
             setTimeout(() => {
-                el.scrollTo({ left: 0, behavior: 'auto' });
+                el.scrollTo({ left: el.scrollLeft - mid, behavior: 'auto' });
             }, 300);
         }
     };
 
-    const handleAddToCart = (product) => {
-        console.log("Producto agregado al carrito:", product);
-        // Acá podrías usar un contexto, Redux, o localStorage según cómo manejes el carrito
+    const handleRedirigir = (producto) => {
+        const url = `/producto/${producto.id}`;
+        window.open(url, '_blank'); 
     };
 
     return (
         <div className={styles.catalog_wrapper}>
             <h1 className={styles.catalog_titles}>¡Explora todo lo que tenemos para ofrecerte!</h1>
-
-            <button className={styles.nav_arrow_left} onClick={scrollLeft}>
-                <FaChevronLeft />
-            </button>
-            <button className={styles.nav_arrow_right} onClick={scrollRight}>
-                <FaChevronRight />
-            </button>
+            
+            <div onMouseEnter={pauseAutoScroll} onMouseLeave={startAutoScroll}>
+                <button className={styles.nav_arrow_left} onClick={scrollLeft}>
+                    <FaChevronLeft />
+                </button>
+                <button className={styles.nav_arrow_right} onClick={scrollRight}>
+                    <FaChevronRight />
+                </button>
+            </div>
+            
 
             <div className={styles.catalog_main} ref={scrollRef}>
                 {loopedProducts.map((product, index) => (
                     <Product
                         key={`${product.id}-${index}`}
-                        title={product.title}
+                        title={product.name}
                         image={product.image}
                         price={product.price}
+                        seller={product.seller}
                         onHoverStart={pauseAutoScroll}
-                        onHoverEnd={resumeAutoScroll}
-                        onAddToCart={() => handleAddToCart(product)}
+                        onHoverEnd={startAutoScroll}
+                        onAddToCart={() => addToCart(product)}
+                        onClick={() => handleRedirigir(product)}
                     />
                 ))}
             </div>
